@@ -1,0 +1,6933 @@
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+        <title>AxoCitas Pro v1.2 | Ortho Smile SJR</title>
+        <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Sans:wght@400;500;600&display=swap"
+            rel="stylesheet" />
+        <script src="https://unpkg.com/@phosphor-icons/web"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
+
+        <style>
+            :root {
+                --primary: #0891b2;
+                --primary-light: #06b6d4;
+                --primary-dark: #0e7490;
+                --primary-bg: #ecfeff;
+                --secondary: #10b981;
+                --secondary-dark: #059669;
+                --accent: #f59e0b;
+                --danger: #ef4444;
+                --danger-dark: #dc2626;
+                --purple: #7c3aed;
+
+                --bg: #f0f9ff;
+                --surface: #ffffff;
+                --surface2: #f8fafc;
+                --border: #e2e8f0;
+                --border-focus: #06b6d4;
+
+                --text-1: #0f172a;
+                --text-2: #475569;
+                --text-3: #94a3b8;
+
+                --radius-sm: 8px;
+                --radius: 12px;
+                --radius-lg: 18px;
+                --radius-xl: 24px;
+
+                --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+                --shadow: 0 4px 12px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.04);
+                --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.05);
+                --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.14), 0 8px 16px rgba(0, 0, 0, 0.06);
+
+                --header-h: 64px;
+                --sidebar-w: 300px;
+            }
+
+            body.dark-mode {
+                --primary: #22d3ee;
+                --primary-light: #67e8f9;
+                --primary-dark: #06b6d4;
+                --primary-bg: #083344;
+                --secondary: #34d399;
+                --secondary-dark: #10b981;
+                --accent: #fbbf24;
+                --danger: #f87171;
+
+                --bg: #0a0f1e;
+                --surface: #111827;
+                --surface2: #1e293b;
+                --border: #1e293b;
+                --border-focus: #22d3ee;
+
+                --text-1: #f1f5f9;
+                --text-2: #94a3b8;
+                --text-3: #475569;
+
+                --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+                --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.4);
+            }
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                font-family: "DM Sans", sans-serif;
+                background: var(--bg);
+                color: var(--text-1);
+                min-height: 100vh;
+                transition:
+                    background 0.3s,
+                    color 0.3s;
+                -webkit-font-smoothing: antialiased;
+            }
+
+            h1,
+            h2,
+            h3,
+            h4,
+            h5 {
+                font-family: "Outfit", sans-serif;
+            }
+
+            /* ─── AUTH ─── */
+            #auth-container {
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 16px;
+                background: linear-gradient(135deg, #ecfeff 0%, #f0f9ff 50%, #e0f2fe 100%);
+            }
+            body.dark-mode #auth-container {
+                background: linear-gradient(135deg, #0a0f1e 0%, #0c1526 50%, #0a1628 100%);
+            }
+            #auth-container img {
+                width: 72px;
+                height: 72px;
+                border-radius: 50%;
+                box-shadow: var(--shadow-lg);
+            }
+            #auth-container h2 {
+                font-size: 1.4rem;
+                font-weight: 800;
+                color: var(--text-1);
+            }
+            #auth-container p {
+                color: var(--text-2);
+                font-size: 0.9rem;
+            }
+
+            /* ─── PRINT ─── */
+            #printArea {
+                display: none;
+            }
+            @media print {
+                body > *:not(#printArea) {
+                    display: none !important;
+                }
+                #printArea {
+                    display: block !important;
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    background: white;
+                    color: black;
+                }
+                .corte-seccion {
+                    border: 1px solid #cbd5e1 !important;
+                    background: transparent !important;
+                    page-break-inside: avoid;
+                }
+            }
+
+            /* ─── APP LAYOUT ─── */
+            #app-container {
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+            }
+
+            /* ─── TOP BAR ─── */
+            .topbar {
+                position: sticky;
+                top: 0;
+                z-index: 200;
+                height: 64px;
+                background: var(--surface);
+                border-bottom: 1px solid var(--border);
+                display: flex;
+                align-items: center;
+                padding: 0 20px;
+                gap: 12px;
+                box-shadow: var(--shadow-sm);
+            }
+            .topbar-brand {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex-shrink: 0;
+            }
+            .topbar-brand img {
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+                object-fit: cover;
+                box-shadow: 0 0 0 3px var(--primary), 0 4px 12px rgba(8,145,178,0.3);
+            }
+            .topbar-brand-text h1 {
+                font-size: 1.25rem;
+                font-weight: 800;
+                color: var(--text-1);
+                line-height: 1;
+            }
+        .topbar-brand-text span {
+                font-size: 0.82rem;
+                color: var(--primary);
+                font-weight: 700;
+                letter-spacing: 0.04em;
+            }
+            .topbar-actions {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-left: auto;
+            }
+            .icon-btn {
+                width: 38px;
+                height: 38px;
+                border-radius: var(--radius-sm);
+                background: var(--surface2);
+                border: 1px solid var(--border);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.15s;
+                color: var(--text-2);
+                font-size: 1.1rem;
+                flex-shrink: 0;
+            }
+            .icon-btn:hover {
+                background: var(--primary-bg);
+                color: var(--primary);
+                border-color: var(--primary);
+            }
+            .icon-btn.active {
+                background: var(--primary-bg);
+                color: var(--primary);
+                border-color: var(--primary);
+            }
+
+            /* Mobile menu button */
+            .menu-toggle {
+                display: none;
+            }
+            @media (max-width: 768px) {
+                .menu-toggle {
+                    display: flex;
+                }
+            }
+
+            /* ─── MAIN AREA ─── */
+            .app-body {
+                display: flex;
+                flex: 1;
+                min-height: 0;
+            }
+
+            /* ─── SIDEBAR ─── */
+            .sidebar {
+                width: var(--sidebar-w);
+                flex-shrink: 0;
+                background: var(--surface);
+                border-right: 1px solid var(--border);
+                overflow-y: auto;
+                padding: 16px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                transition: transform 0.25s ease;
+            }
+            @media (max-width: 768px) {
+                .sidebar {
+                    position: fixed;
+                    left: 0;
+                    top: var(--header-h);
+                    bottom: 0;
+                    z-index: 150;
+                    box-shadow: var(--shadow-xl);
+                    transform: translateX(-100%);
+                }
+                .sidebar.open {
+                    transform: translateX(0);
+                }
+                .sidebar-overlay {
+                    display: none;
+                    position: fixed;
+                    inset: 0;
+                    background: rgba(0, 0, 0, 0.4);
+                    z-index: 149;
+                    top: var(--header-h);
+                }
+                .sidebar-overlay.open {
+                    display: block;
+                }
+            }
+
+            .sidebar-section-title {
+                font-size: 0.68rem;
+                font-weight: 700;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                color: var(--text-3);
+                padding: 8px 8px 4px;
+            }
+
+            .nav-btn {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 10px 12px;
+                border-radius: var(--radius-sm);
+                border: none;
+                background: transparent;
+                color: var(--text-2);
+                font-family: "DM Sans", sans-serif;
+                font-size: 0.875rem;
+                font-weight: 500;
+                cursor: pointer;
+                width: 100%;
+                text-align: left;
+                transition: all 0.15s;
+            }
+            .nav-btn i {
+                font-size: 1.1rem;
+                width: 20px;
+                flex-shrink: 0;
+            }
+            .nav-btn:hover {
+                background: var(--surface2);
+                color: var(--text-1);
+            }
+            .nav-btn.primary-action {
+                background: var(--primary);
+                color: white;
+                font-weight: 600;
+                box-shadow: 0 2px 8px rgba(8, 145, 178, 0.3);
+                margin-bottom: 4px;
+            }
+            .nav-btn.primary-action:hover {
+                background: var(--primary-dark);
+            }
+            .nav-btn.success-action {
+                background: var(--secondary);
+                color: white;
+                font-weight: 600;
+                box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+            }
+            .nav-btn.success-action:hover {
+                background: var(--secondary-dark);
+            }
+
+            .sidebar-divider {
+                height: 1px;
+                background: var(--border);
+                margin: 4px 0;
+            }
+
+            /* ─── CONTENT ─── */
+            .main-content {
+                flex: 1;
+                min-width: 0;
+                padding: 8px;
+                overflow-y: auto;
+            }
+            @media (max-width: 480px) {
+                .main-content {
+                    padding: 4px;
+                }
+            }
+
+            /* ─── DASHBOARD STATS ─── */
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(6, 1fr);
+                gap: 4px;
+                margin-bottom: 4px;
+            }
+            @media (max-width: 1300px) {
+                .stats-grid {
+                    grid-template-columns: repeat(3, 1fr);
+                }
+            }
+            @media (max-width: 640px) {
+                .stats-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 4px;
+                }
+            }
+
+            .stat-card {
+                background: var(--surface);
+                border-radius: var(--radius-sm);
+                padding: 3px 6px;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                border: 1px solid var(--border);
+                box-shadow: var(--shadow-sm);
+                transition:
+                    transform 0.15s,
+                    box-shadow 0.15s;
+                cursor: default;
+                min-width: 0;
+            }
+            .stat-card:hover {
+                transform: translateY(-1px);
+                box-shadow: var(--shadow);
+            }
+            .stat-card-action {
+                cursor: pointer !important;
+                border-style: dashed;
+                border-color: #f9a8d4;
+            }
+            .stat-card-action:hover {
+                border-color: #be185d;
+                background: #fdf2f8;
+            }
+            body.dark-mode .stat-card-action {
+                border-color: #831843;
+            }
+            body.dark-mode .stat-card-action:hover {
+                background: #500724;
+            }
+
+            .stat-icon {
+                width: 24px;
+                height: 24px;
+                border-radius: 5px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.75rem;
+                flex-shrink: 0;
+            }
+            .stat-icon.blue {
+                background: #e0f2fe;
+                color: #0891b2;
+            }
+            .stat-icon.amber {
+                background: #fef3c7;
+                color: #d97706;
+            }
+            .stat-icon.green {
+                background: #d1fae5;
+                color: #059669;
+            }
+            .stat-icon.purple {
+                background: #ede9fe;
+                color: #7c3aed;
+            }
+            .stat-icon.red {
+                background: #fee2e2;
+                color: #dc2626;
+            }
+            body.dark-mode .stat-icon.blue {
+                background: #083344;
+                color: #22d3ee;
+            }
+            body.dark-mode .stat-icon.amber {
+                background: #3b1c00;
+                color: #fbbf24;
+            }
+            body.dark-mode .stat-icon.green {
+                background: #022c22;
+                color: #34d399;
+            }
+            body.dark-mode .stat-icon.purple {
+                background: #2e1065;
+                color: #a78bfa;
+            }
+            body.dark-mode .stat-icon.red {
+                background: #3b0c0c;
+                color: #f87171;
+            }
+
+            .stat-info {
+                min-width: 0;
+            }
+            .stat-value {
+                font-family: "Outfit", sans-serif;
+                font-size: 0.85rem;
+                font-weight: 800;
+                line-height: 1;
+                color: var(--text-1);
+            }
+            .stat-label {
+                font-size: 0.6rem;
+                color: var(--text-2);
+                margin-top: 1px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            /* ─── SYNC STATUS ─── */
+            .sync-bar {
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                gap: 6px;
+                margin-bottom: 4px;
+                font-size: 0.65rem;
+                color: var(--text-3);
+            }
+            .sync-dot {
+                width: 5px;
+                height: 5px;
+                border-radius: 50%;
+                background: var(--secondary);
+                animation: pulse 2s infinite;
+            }
+            @keyframes pulse {
+                0%,
+                100% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0.4;
+                }
+            }
+
+            /* ─── CALENDAR CARD ─── */
+            .calendar-card {
+                background: var(--surface);
+                border-radius: var(--radius);
+                border: 1px solid var(--border);
+                box-shadow: var(--shadow);
+                overflow: hidden;
+            }
+            .calendar-card .fc {
+                padding: 4px 6px;
+            }
+            @media (max-width: 480px) {
+                .calendar-card .fc {
+                    padding: 4px;
+                }
+            }
+
+            #calendar {
+                --fc-border-color: var(--border);
+                --fc-today-bg-color: color-mix(in srgb, var(--primary) 8%, transparent);
+                --fc-button-bg-color: var(--primary);
+                --fc-button-hover-bg-color: var(--primary-dark);
+                --fc-button-active-bg-color: var(--primary-dark);
+                --fc-button-border-color: var(--primary);
+                --fc-button-text-color: white;
+                --fc-page-bg-color: transparent;
+            }
+            .fc-toolbar-title {
+                font-family: "Outfit", sans-serif !important;
+                font-weight: 700 !important;
+                font-size: 1.1rem !important;
+                color: var(--text-1) !important;
+            }
+            .fc-button {
+                border-radius: var(--radius-sm) !important;
+                font-family: "DM Sans", sans-serif !important;
+                font-weight: 600 !important;
+                font-size: 0.8rem !important;
+                padding: 6px 10px !important;
+            }
+            .fc-event {
+                border-radius: 6px !important;
+                padding: 2px 6px !important;
+                font-size: 0.78rem !important;
+                font-weight: 600 !important;
+                cursor: pointer;
+                transition:
+                    transform 0.1s,
+                    box-shadow 0.1s;
+                border: none !important;
+            }
+            .fc-event:hover {
+                transform: scale(1.03);
+                box-shadow: var(--shadow) !important;
+            }
+            .fc-daygrid-day-number {
+                color: var(--text-2) !important;
+                font-size: 0.82rem !important;
+            }
+            .fc-col-header-cell-cushion {
+                color: var(--text-2) !important;
+                font-size: 0.78rem !important;
+                font-weight: 700 !important;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+            .fc-event-estado-pendiente {
+                background: #f59e0b !important;
+                color: #fff !important;
+            }
+            .fc-event-estado-confirmada {
+                background: #3b82f6 !important;
+                color: #fff !important;
+            }
+            .fc-event-estado-pagada {
+                background: #10b981 !important;
+                color: #fff !important;
+            }
+            .fc-event-estado-cancelada {
+                background: #94a3b8 !important;
+                color: #fff !important;
+                opacity: 0.7;
+            }
+            .event-complete-btn {
+                background: rgba(255, 255, 255, 0.3);
+                border: none;
+                border-radius: 50%;
+                width: 16px;
+                height: 16px;
+                margin-left: 4px;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                transition: background 0.15s;
+                flex-shrink: 0;
+            }
+            .event-complete-btn:hover {
+                background: rgba(255, 255, 255, 0.55);
+            }
+
+            /* ─── SIDEBAR RIGHT (Hoy) ─── */
+            .right-panel {
+                width: 280px;
+                flex-shrink: 0;
+                background: var(--surface);
+                border-left: 1px solid var(--border);
+                padding: 16px;
+                overflow-y: auto;
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+            @media (max-width: 1100px) {
+                .right-panel {
+                    display: none;
+                }
+            }
+
+            .panel-title {
+                font-family: "Outfit", sans-serif;
+                font-size: 0.85rem;
+                font-weight: 700;
+                color: var(--text-1);
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding-bottom: 10px;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .alert-item {
+                background: var(--surface2);
+                border-radius: var(--radius-sm);
+                padding: 10px 12px;
+                border-left: 3px solid var(--primary);
+                margin-bottom: 8px;
+                cursor: pointer;
+                transition: background 0.15s;
+            }
+            .alert-item:hover {
+                background: var(--primary-bg);
+            }
+            .alert-item.cirugia {
+                border-left-color: var(--danger);
+            }
+            .alert-item.ortodoncia {
+                border-left-color: var(--purple);
+            }
+            .alert-item.limpieza {
+                border-left-color: var(--secondary);
+            }
+            .alert-pac {
+                font-weight: 600;
+                font-size: 0.875rem;
+                color: var(--text-1);
+            }
+            .alert-detail {
+                font-size: 0.75rem;
+                color: var(--text-2);
+                margin-top: 2px;
+            }
+
+            .badge {
+                display: inline-flex;
+                align-items: center;
+                padding: 2px 8px;
+                border-radius: 99px;
+                font-size: 0.68rem;
+                font-weight: 700;
+                letter-spacing: 0.02em;
+                margin-top: 4px;
+            }
+            .badge-consulta {
+                background: #e0f2fe;
+                color: #0369a1;
+            }
+            .badge-ortodoncia {
+                background: #ede9fe;
+                color: #5b21b6;
+            }
+            .badge-cirugia {
+                background: #fee2e2;
+                color: #be123c;
+            }
+            .badge-limpieza {
+                background: #d1fae5;
+                color: #065f46;
+            }
+            .badge-endodoncia {
+                background: #fef3c7;
+                color: #92400e;
+            }
+            .badge-estetica {
+                background: #fce7f3;
+                color: #9d174d;
+            }
+            .badge-otro {
+                background: var(--surface2);
+                color: var(--text-2);
+            }
+            body.dark-mode .badge-consulta {
+                background: #083344;
+                color: #67e8f9;
+            }
+            body.dark-mode .badge-ortodoncia {
+                background: #2e1065;
+                color: #c4b5fd;
+            }
+            body.dark-mode .badge-cirugia {
+                background: #3b0c0c;
+                color: #fca5a5;
+            }
+            body.dark-mode .badge-limpieza {
+                background: #022c22;
+                color: #6ee7b7;
+            }
+            body.dark-mode .badge-endodoncia {
+                background: #3b1c00;
+                color: #fcd34d;
+            }
+
+            /* ─── FORMS & MODALS ─── */
+            .modal-backdrop {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(2px);
+                z-index: 998;
+            }
+            .modal {
+                display: none;
+                position: fixed;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                background: var(--surface);
+                border-radius: var(--radius-lg);
+                box-shadow: var(--shadow-xl);
+                border: 1px solid var(--border);
+                width: 95%;
+                max-width: 560px;
+                max-height: 92vh;
+                overflow-y: auto;
+                z-index: 999;
+            }
+            @media (max-width: 480px) {
+                .modal {
+                    top: auto;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    transform: none;
+                    width: 100%;
+                    max-width: 100%;
+                    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+                    max-height: 94vh;
+                }
+            }
+            .modal-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 20px 24px 16px;
+                border-bottom: 1px solid var(--border);
+                position: sticky;
+                top: 0;
+                background: var(--surface);
+                z-index: 1;
+                border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            }
+            .modal-header h2 {
+                font-size: 1.05rem;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: var(--text-1);
+            }
+            .modal-header h2 i {
+                color: var(--primary);
+            }
+            .modal-close {
+                width: 32px;
+                height: 32px;
+                border-radius: var(--radius-sm);
+                border: 1px solid var(--border);
+                background: var(--surface2);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                color: var(--text-2);
+                transition: all 0.15s;
+            }
+            .modal-close:hover {
+                background: var(--danger);
+                color: white;
+                border-color: var(--danger);
+            }
+            .modal-body {
+                padding: 20px 24px 24px;
+            }
+
+            label {
+                display: block;
+                font-size: 0.78rem;
+                font-weight: 600;
+                color: var(--text-2);
+                margin-bottom: 5px;
+                margin-top: 14px;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+            }
+            label:first-child {
+                margin-top: 0;
+            }
+
+            input,
+            select,
+            textarea {
+                background: var(--surface2);
+                border: 1.5px solid var(--border);
+                border-radius: var(--radius-sm);
+                padding: 10px 12px;
+                width: 100%;
+                box-sizing: border-box;
+                color: var(--text-1);
+                font-family: "DM Sans", sans-serif;
+                font-size: 0.9rem;
+                transition:
+                    border-color 0.15s,
+                    box-shadow 0.15s;
+            }
+            input:focus,
+            select:focus,
+            textarea:focus {
+                outline: none;
+                border-color: var(--border-focus);
+                box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 15%, transparent);
+            }
+            .form-grid-2 {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 0 14px;
+            }
+            @media (max-width: 480px) {
+                .form-grid-2 {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            /* ─── BUTTONS ─── */
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 7px;
+                padding: 10px 18px;
+                border: none;
+                border-radius: var(--radius-sm);
+                font-family: "DM Sans", sans-serif;
+                font-weight: 600;
+                font-size: 0.875rem;
+                cursor: pointer;
+                transition: all 0.15s;
+                white-space: nowrap;
+            }
+            .btn-primary {
+                background: var(--primary);
+                color: white;
+                box-shadow: 0 2px 8px rgba(8, 145, 178, 0.25);
+            }
+            .btn-primary:hover {
+                background: var(--primary-dark);
+                transform: translateY(-1px);
+            }
+            .btn-success {
+                background: var(--secondary);
+                color: white;
+                box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+            }
+            .btn-success:hover {
+                background: var(--secondary-dark);
+                transform: translateY(-1px);
+            }
+            .btn-danger {
+                background: var(--danger);
+                color: white;
+            }
+            .btn-danger:hover {
+                background: var(--danger-dark);
+            }
+            .btn-ghost {
+                background: var(--surface2);
+                color: var(--text-2);
+                border: 1.5px solid var(--border);
+            }
+            .btn-ghost:hover {
+                background: var(--border);
+                color: var(--text-1);
+            }
+            .btn-orange {
+                background: #f97316;
+                color: white;
+            }
+            .btn-orange:hover {
+                background: #ea580c;
+            }
+            .btn-whatsapp {
+                background: #25d366;
+                color: white;
+            }
+            .btn-whatsapp:hover {
+                background: #20ba5a;
+            }
+            .btn-sm {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+            .btn-xs {
+                padding: 4px 8px;
+                font-size: 0.75rem;
+            }
+            .btn-full {
+                width: 100%;
+            }
+
+            /* ─── PAY SECTION ─── */
+            .pay-section {
+                background: var(--surface2);
+                border: 1.5px solid var(--border);
+                border-radius: var(--radius);
+                padding: 14px;
+                margin-top: 14px;
+            }
+            .pay-section-title {
+                font-family: "Outfit", sans-serif;
+                font-size: 0.875rem;
+                font-weight: 700;
+                color: var(--text-1);
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                margin-bottom: 4px;
+            }
+            .pay-section-title i {
+                color: var(--secondary);
+            }
+
+            /* ─── SPECIALTY WARNING ─── */
+            .alerta-especialidad {
+                background: #fef3c7;
+                border: 1.5px solid #f59e0b;
+                border-radius: var(--radius-sm);
+                padding: 10px 12px;
+                margin-top: 8px;
+                font-size: 0.82rem;
+                color: #92400e;
+                display: none;
+            }
+            body.dark-mode .alerta-especialidad {
+                background: #3b1c00;
+                color: #fcd34d;
+                border-color: #d97706;
+            }
+
+            /* ─── RECEP CHIP ─── */
+            .recep-chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+                background: var(--primary-bg);
+                border: 1.5px solid var(--primary);
+                border-radius: 99px;
+                padding: 5px 12px 5px 6px;
+                font-size: 0.8rem;
+                font-weight: 600;
+                color: var(--primary);
+            }
+            .avatar-sm {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                background: var(--primary);
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.7rem;
+                font-weight: 800;
+            }
+            .btn-salir {
+                background: none;
+                border: none;
+                cursor: pointer;
+                color: var(--text-3);
+                padding: 0;
+                display: flex;
+                align-items: center;
+                font-size: 1rem;
+                transition: color 0.15s;
+            }
+            .btn-salir:hover {
+                color: var(--danger);
+            }
+
+            /* ─── RECEP LOGIN ─── */
+            .recep-login-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.7);
+                z-index: 9500;
+                align-items: center;
+                justify-content: center;
+                backdrop-filter: blur(4px);
+            }
+            .recep-login-overlay.visible {
+                display: flex;
+            }
+            .recep-login-box {
+                background: var(--surface);
+                border-radius: var(--radius-xl);
+                padding: 32px;
+                width: 360px;
+                max-width: 95vw;
+                box-shadow: var(--shadow-xl);
+                border: 1px solid var(--border);
+                text-align: center;
+            }
+            .recep-login-box .logo-icon {
+                font-size: 2.5rem;
+                color: var(--primary);
+                margin-bottom: 8px;
+                display: flex;
+                justify-content: center;
+            }
+            .recep-login-box h2 {
+                font-size: 1.3rem;
+                margin-bottom: 4px;
+            }
+            .recep-login-box p {
+                color: var(--text-2);
+                font-size: 0.85rem;
+                margin-bottom: 20px;
+            }
+            .recep-lista {
+                display: grid;
+                gap: 8px;
+                margin-bottom: 16px;
+            }
+            .recep-btn {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px 16px;
+                background: var(--surface2);
+                border: 1.5px solid var(--border);
+                border-radius: var(--radius);
+                cursor: pointer;
+                width: 100%;
+                text-align: left;
+                transition: all 0.15s;
+                font-size: 0.875rem;
+                font-weight: 600;
+                color: var(--text-1);
+                font-family: "DM Sans", sans-serif;
+            }
+            .recep-btn:hover {
+                border-color: var(--primary);
+                background: var(--primary-bg);
+            }
+            .recep-avatar {
+                width: 38px;
+                height: 38px;
+                border-radius: 50%;
+                background: var(--primary);
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 800;
+                font-size: 1rem;
+                flex-shrink: 0;
+            }
+
+            /* ─── ADMIN OVERLAY ─── */
+            .admin-login-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(3px);
+                z-index: 9000;
+                align-items: center;
+                justify-content: center;
+            }
+            .admin-login-overlay.visible {
+                display: flex;
+            }
+            .admin-login-box {
+                background: var(--surface);
+                border-radius: var(--radius-xl);
+                padding: 32px;
+                width: 360px;
+                max-width: 95vw;
+                box-shadow: var(--shadow-xl);
+                border: 1px solid var(--border);
+                text-align: center;
+            }
+            .admin-login-box h2 {
+                font-size: 1.2rem;
+                margin: 12px 0 6px;
+            }
+            .admin-login-box p {
+                color: var(--text-2);
+                font-size: 0.85rem;
+                margin-bottom: 16px;
+            }
+
+            /* ─── ADMIN PANEL ─── */
+            .modal-admin {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(3px);
+                z-index: 8000;
+                overflow-y: auto;
+            }
+            .modal-admin.visible {
+                display: block;
+            }
+            .admin-panel {
+                background: var(--surface);
+                max-width: 820px;
+                margin: 24px auto;
+                border-radius: var(--radius-xl);
+                box-shadow: var(--shadow-xl);
+                border: 1px solid var(--border);
+                overflow: hidden;
+            }
+            @media (max-width: 860px) {
+                .admin-panel {
+                    margin: 0;
+                    border-radius: 0;
+                    min-height: 100vh;
+                }
+            }
+            .admin-header {
+                background: linear-gradient(135deg, var(--primary) 0%, var(--purple) 100%);
+                padding: 20px 24px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .admin-header h2 {
+                color: white;
+                font-size: 1.1rem;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .admin-header-close {
+                background: rgba(255, 255, 255, 0.2);
+                border: none;
+                color: white;
+                border-radius: var(--radius-sm);
+                width: 32px;
+                height: 32px;
+                cursor: pointer;
+                font-size: 1rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: background 0.15s;
+            }
+            .admin-header-close:hover {
+                background: rgba(255, 255, 255, 0.4);
+            }
+            .admin-body {
+                padding: 20px 24px;
+            }
+            .admin-tabs {
+                display: flex;
+                gap: 4px;
+                background: var(--surface2);
+                padding: 4px;
+                border-radius: var(--radius);
+                margin-bottom: 20px;
+                flex-wrap: wrap;
+            }
+            .admin-tab {
+                flex: 1;
+                min-width: 80px;
+                padding: 8px 6px;
+                border: none;
+                background: transparent;
+                border-radius: var(--radius-sm);
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 0.75rem;
+                color: var(--text-2);
+                transition: all 0.15s;
+                font-family: "DM Sans", sans-serif;
+            }
+            .admin-tab.activo {
+                background: var(--surface);
+                color: var(--primary);
+                box-shadow: var(--shadow-sm);
+            }
+            .admin-save-bar {
+                position: sticky;
+                bottom: 0;
+                background: var(--surface);
+                border-top: 1px solid var(--border);
+                padding: 14px 24px;
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
+            }
+
+            .plantilla-card {
+                background: var(--surface2);
+                border-radius: var(--radius);
+                padding: 16px;
+                margin-bottom: 14px;
+                border: 1.5px solid var(--border);
+            }
+            .plantilla-card h4 {
+                margin: 0 0 10px;
+                font-size: 0.9rem;
+            }
+            .vars-chip {
+                display: inline-block;
+                background: #dbeafe;
+                color: #1e40af;
+                border-radius: 99px;
+                padding: 2px 8px;
+                font-size: 0.7rem;
+                margin: 2px;
+                cursor: pointer;
+                font-family: monospace;
+            }
+            .vars-chip:hover {
+                background: #bfdbfe;
+            }
+            body.dark-mode .vars-chip {
+                background: #1e3a5f;
+                color: #93c5fd;
+            }
+
+            .categoria-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 10px;
+                background: var(--surface2);
+                border-radius: var(--radius-sm);
+                margin-bottom: 7px;
+                border: 1.5px solid var(--border);
+            }
+            .cat-emoji {
+                width: 46px;
+                flex: none;
+                text-align: center;
+            }
+            .cat-label {
+                flex: 1;
+                background: transparent;
+                border: none;
+                padding: 0;
+                font-size: 0.88rem;
+                color: var(--text-1);
+            }
+            .cat-label:focus {
+                outline: none;
+            }
+            .btn-del {
+                background: none;
+                border: none;
+                color: var(--danger);
+                cursor: pointer;
+                font-size: 1rem;
+                padding: 2px 4px;
+                flex-shrink: 0;
+            }
+            .add-categoria {
+                display: flex;
+                gap: 8px;
+                margin-top: 10px;
+            }
+            .add-categoria input {
+                flex: 1;
+            }
+            .add-categoria input:first-child {
+                flex: 0 0 54px;
+            }
+
+            /* ─── RECORDS TABLE ─── */
+            .records-card {
+                background: var(--surface);
+                border-radius: var(--radius-lg);
+                border: 1px solid var(--border);
+                box-shadow: var(--shadow);
+                margin-top: 20px;
+                overflow: hidden;
+            }
+            .records-header {
+                padding: 16px 20px;
+                border-bottom: 1px solid var(--border);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .records-header h2 {
+                font-size: 1rem;
+                font-weight: 700;
+                color: var(--text-1);
+            }
+            .tabla-datos {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 0.85rem;
+            }
+            .tabla-datos th {
+                padding: 10px 14px;
+                text-align: left;
+                font-size: 0.72rem;
+                font-weight: 700;
+                color: var(--text-2);
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                background: var(--surface2);
+                border-bottom: 1px solid var(--border);
+                white-space: nowrap;
+            }
+            .tabla-datos td {
+                padding: 10px 14px;
+                border-bottom: 1px solid var(--border);
+                vertical-align: middle;
+            }
+            .tabla-datos tbody tr:hover {
+                background: var(--surface2);
+            }
+            .tabla-datos tbody tr.completado {
+                opacity: 0.55;
+            }
+            @media (max-width: 768px) {
+                .tabla-datos th:nth-child(n + 4),
+                .tabla-datos td:nth-child(n + 4) {
+                    display: none;
+                }
+            }
+
+            /* ─── TABS NAV ─── */
+            .tabs-nav {
+                display: flex;
+                gap: 4px;
+                background: var(--surface2);
+                padding: 4px;
+                border-radius: var(--radius);
+                margin-bottom: 16px;
+            }
+            .tab-btn {
+                flex: 1;
+                padding: 8px;
+                border: none;
+                background: transparent;
+                border-radius: var(--radius-sm);
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 0.82rem;
+                color: var(--text-2);
+                transition: all 0.2s;
+                font-family: "DM Sans", sans-serif;
+            }
+            .tab-btn.activo {
+                background: var(--surface);
+                color: var(--primary);
+                box-shadow: var(--shadow-sm);
+            }
+
+            /* ─── PATIENT SEARCH ─── */
+            .buscador-paciente-wrap {
+                position: relative;
+                margin-top: 0;
+            }
+            .buscador-icono {
+                position: absolute;
+                left: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-3);
+                font-size: 1rem;
+                pointer-events: none;
+            }
+            .buscador-paciente-input {
+                padding-left: 34px !important;
+            }
+            .buscador-dropdown {
+                position: absolute;
+                top: calc(100% + 4px);
+                left: 0;
+                right: 0;
+                background: var(--surface);
+                border: 1.5px solid var(--border);
+                border-radius: var(--radius);
+                box-shadow: var(--shadow-lg);
+                z-index: 2000;
+                max-height: 200px;
+                overflow-y: auto;
+                display: none;
+            }
+            .buscador-item {
+                padding: 10px 14px;
+                cursor: pointer;
+                font-size: 0.85rem;
+                border-bottom: 1px solid var(--border);
+                transition: background 0.1s;
+            }
+            .buscador-item:last-child {
+                border-bottom: none;
+            }
+            .buscador-item:hover {
+                background: var(--primary-bg);
+            }
+            .buscador-item .pac-nombre {
+                font-weight: 600;
+                color: var(--text-1);
+            }
+            .buscador-item .pac-detalle {
+                color: var(--text-2);
+                font-size: 0.75rem;
+                margin-top: 1px;
+            }
+            .buscador-seleccionado {
+                background: var(--primary-bg);
+                border: 1.5px solid var(--primary);
+                border-radius: var(--radius-sm);
+                padding: 8px 12px;
+                margin-top: 6px;
+                font-size: 0.875rem;
+                display: none;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .buscador-seleccionado.visible {
+                display: flex;
+            }
+            .pac-clear {
+                background: none;
+                border: none;
+                cursor: pointer;
+                color: var(--text-3);
+                font-size: 1rem;
+                padding: 0;
+                transition: color 0.15s;
+            }
+            .pac-clear:hover {
+                color: var(--danger);
+            }
+
+            /* ─── CORTE ─── */
+            .corte-seccion {
+                background: var(--surface2);
+                border-radius: var(--radius);
+                padding: 14px;
+                margin-bottom: 12px;
+                border: 1px solid var(--border);
+            }
+            .corte-seccion h4 {
+                margin: 0 0 10px;
+                font-size: 0.78rem;
+                color: var(--text-2);
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                border-bottom: 1px solid var(--border);
+                padding-bottom: 7px;
+                font-weight: 700;
+            }
+            .corte-fila {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 5px 0;
+                font-size: 0.875rem;
+            }
+            .corte-fila.total {
+                border-top: 2px solid var(--border);
+                margin-top: 6px;
+                padding-top: 8px;
+                font-weight: 800;
+                font-size: 1rem;
+            }
+            .monto-positivo {
+                color: var(--secondary);
+                font-weight: 700;
+            }
+            .monto-negativo {
+                color: var(--danger);
+                font-weight: 700;
+            }
+
+            /* ─── TAGS ─── */
+            .tag {
+                display: inline-flex;
+                align-items: center;
+                padding: 2px 8px;
+                border-radius: 99px;
+                font-size: 0.72rem;
+                font-weight: 700;
+            }
+            .tag-efectivo {
+                background: #d1fae5;
+                color: #065f46;
+            }
+            .tag-tarjeta {
+                background: #dbeafe;
+                color: #1e40af;
+            }
+            .tag-transferencia {
+                background: #ede9fe;
+                color: #5b21b6;
+            }
+            .tag-devolucion {
+                background: #fee2e2;
+                color: #be123c;
+            }
+            .tag-ajuste {
+                background: #fef3c7;
+                color: #b45309;
+            }
+            .tag-pendiente {
+                background: #fef3c7;
+                color: #b45309;
+            }
+            body.dark-mode .tag-efectivo {
+                background: #022c22;
+                color: #6ee7b7;
+            }
+            body.dark-mode .tag-tarjeta {
+                background: #1e3a5f;
+                color: #93c5fd;
+            }
+            body.dark-mode .tag-transferencia {
+                background: #2e1065;
+                color: #c4b5fd;
+            }
+
+            /* ─── NOTIFICATION TOAST ─── */
+            .toast {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 14px 18px;
+                border-radius: var(--radius);
+                color: white;
+                box-shadow: var(--shadow-lg);
+                z-index: 10001;
+                font-weight: 600;
+                font-size: 0.875rem;
+                max-width: 320px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                animation: slideIn 0.25s ease;
+            }
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translateX(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+            @media (max-width: 480px) {
+                .toast {
+                    top: auto;
+                    bottom: 20px;
+                    right: 10px;
+                    left: 10px;
+                    max-width: none;
+                }
+            }
+
+            /* ─── MISC ─── */
+            .empty-state {
+                text-align: center;
+                padding: 24px 16px;
+                color: var(--text-3);
+                font-size: 0.875rem;
+            }
+            .item-gestion {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px 12px;
+                border-radius: var(--radius-sm);
+                margin-bottom: 7px;
+                background: var(--surface2);
+                gap: 8px;
+                border: 1px solid var(--border);
+            }
+            .item-gestion span {
+                font-weight: 600;
+                font-size: 0.875rem;
+                flex: 1;
+                color: var(--text-1);
+            }
+            .lista-gestion {
+                margin-top: 14px;
+                border-top: 1px solid var(--border);
+                padding-top: 12px;
+            }
+
+            /* Firebase Config Modal */
+            #configModal .modal-body {
+            }
+            .config-tab {
+                flex: 1;
+                padding: 8px;
+                border: none;
+                background: transparent;
+                border-radius: var(--radius-sm);
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 0.82rem;
+                color: var(--text-2);
+                transition: all 0.2s;
+                font-family: "DM Sans", sans-serif;
+            }
+            .config-tab.activo {
+                background: var(--surface);
+                color: var(--primary);
+                box-shadow: var(--shadow-sm);
+            }
+
+            /* ─── WHATSAPP SECTION ─── */
+            .wa-section {
+                background: #f0fdf4;
+                border: 1.5px solid #bbf7d0;
+                border-radius: var(--radius);
+                padding: 12px;
+                margin-top: 10px;
+                display: none;
+            }
+            body.dark-mode .wa-section {
+                background: #022c22;
+                border-color: #15803d;
+            }
+            .wa-section-title {
+                font-size: 0.82rem;
+                font-weight: 700;
+                color: #065f46;
+                margin-bottom: 8px;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+            body.dark-mode .wa-section-title {
+                color: #6ee7b7;
+            }
+
+            /* ─── STATUS COLORS (text) ─── */
+            .status-pendiente {
+                color: #d97706;
+                font-weight: 700;
+            }
+            .status-confirmada {
+                color: #2563eb;
+                font-weight: 700;
+            }
+            .status-completada {
+                color: #059669;
+                font-weight: 700;
+            }
+            .status-cancelada {
+                color: #dc2626;
+                font-weight: 700;
+            }
+
+            /* ─── Details grid ─── */
+            .detail-card {
+                background: var(--surface2);
+                border-radius: var(--radius);
+                padding: 14px;
+                border: 1px solid var(--border);
+                margin-bottom: 10px;
+            }
+            .detail-label {
+                font-size: 0.7rem;
+                color: var(--text-3);
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                font-weight: 700;
+                margin-bottom: 3px;
+            }
+            .detail-value {
+                font-size: 0.9rem;
+                font-weight: 600;
+                color: var(--text-1);
+            }
+
+            /* ─── EDITOR TRANSACCION ─── */
+            #editorTransaccionDiv {
+                display: none;
+                background: #fffcf0;
+                border: 1.5px solid #fef3c7;
+                padding: 16px;
+                border-radius: var(--radius);
+                margin-bottom: 16px;
+            }
+            body.dark-mode #editorTransaccionDiv {
+                background: #3b1c00;
+                border-color: #d97706;
+            }
+
+            /* ─── BOTTOM NAV (mobile) ─── */
+            .bottom-nav {
+                display: none;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: var(--surface);
+                border-top: 1px solid var(--border);
+                padding: 8px 0 env(safe-area-inset-bottom, 8px);
+                z-index: 100;
+                box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+            }
+            @media (max-width: 768px) {
+                .bottom-nav {
+                    display: flex;
+                    justify-content: space-around;
+                }
+                .main-content {
+                    padding-bottom: 80px;
+                }
+            }
+            .bottom-nav-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 3px;
+                padding: 6px 12px;
+                border-radius: var(--radius-sm);
+                cursor: pointer;
+                color: var(--text-3);
+                font-size: 0.65rem;
+                font-weight: 600;
+                border: none;
+                background: none;
+                transition: color 0.15s;
+                font-family: "DM Sans", sans-serif;
+            }
+            .bottom-nav-item i {
+                font-size: 1.3rem;
+            }
+            .bottom-nav-item.active {
+                color: var(--primary);
+            }
+            .bottom-nav-fab {
+                width: 52px;
+                height: 52px;
+                border-radius: 50%;
+                background: var(--primary);
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.6rem;
+                border: none;
+                cursor: pointer;
+                margin-top: -20px;
+                box-shadow: 0 4px 16px rgba(8, 145, 178, 0.4);
+                transition:
+                    transform 0.15s,
+                    box-shadow 0.15s;
+            }
+            .bottom-nav-fab:hover {
+                transform: scale(1.08);
+                box-shadow: 0 6px 20px rgba(8, 145, 178, 0.5);
+            }
+
+            .historial-cortes-panel {
+                display: none;
+                margin-top: 14px;
+                border-top: 1px solid var(--border);
+                padding-top: 14px;
+                max-height: 280px;
+                overflow-y: auto;
+            }
+            /* ─── EXPEDIENTE ─── */
+            .exp-tabs {
+                display: flex;
+                gap: 4px;
+                background: var(--surface2);
+                padding: 4px;
+                border-radius: var(--radius);
+                margin-bottom: 16px;
+            }
+            .exp-tab {
+                flex: 1;
+                padding: 7px;
+                border: none;
+                background: transparent;
+                border-radius: var(--radius-sm);
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 0.8rem;
+                color: var(--text-2);
+                transition: all 0.15s;
+                font-family: "DM Sans", sans-serif;
+            }
+            .exp-tab.activo {
+                background: var(--surface);
+                color: var(--primary);
+                box-shadow: var(--shadow-sm);
+            }
+            .odontograma {
+                display: grid;
+                grid-template-columns: repeat(8, 1fr);
+                gap: 4px;
+                margin: 10px 0;
+            }
+            .diente {
+                background: var(--surface2);
+                border: 1.5px solid var(--border);
+                border-radius: 6px;
+                padding: 6px 4px;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.15s;
+                font-size: 0.7rem;
+                font-weight: 700;
+                color: var(--text-2);
+            }
+            .diente:hover {
+                border-color: var(--primary);
+                color: var(--primary);
+            }
+            .diente.sano {
+                background: var(--surface2);
+            }
+            .diente.caries {
+                background: #fef3c7;
+                border-color: #f59e0b;
+                color: #b45309;
+            }
+            .diente.tratado {
+                background: #d1fae5;
+                border-color: #10b981;
+                color: #065f46;
+            }
+            .diente.extraccion {
+                background: #fee2e2;
+                border-color: #ef4444;
+                color: #b91c1c;
+            }
+            .diente.corona {
+                background: #ede9fe;
+                border-color: #7c3aed;
+                color: #5b21b6;
+            }
+            /* ─── BUSCADOR GLOBAL ─── */
+            .gsearch-section {
+                padding: 8px 12px 4px;
+                font-size: 0.68rem;
+                font-weight: 700;
+                color: var(--text-3);
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+                border-bottom: 1px solid var(--border);
+            }
+            .gsearch-item {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 10px 14px;
+                cursor: pointer;
+                border-bottom: 1px solid var(--border);
+                transition: background 0.1s;
+                font-size: 0.85rem;
+            }
+            .gsearch-item:last-child {
+                border-bottom: none;
+            }
+            .gsearch-item:hover {
+                background: var(--primary-bg);
+            }
+            .gsearch-icon {
+                width: 28px;
+                height: 28px;
+                border-radius: 6px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.85rem;
+                flex-shrink: 0;
+            }
+            .gsearch-main {
+                font-weight: 600;
+                color: var(--text-1);
+            }
+            .gsearch-sub {
+                font-size: 0.75rem;
+                color: var(--text-2);
+                margin-top: 1px;
+            }
+            /* ─── CONFIRMACION CITA ─── */
+            .confirmar-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                padding: 3px 8px;
+                border-radius: 99px;
+                font-size: 0.7rem;
+                font-weight: 700;
+                border: 1.5px solid;
+                cursor: pointer;
+                transition: all 0.15s;
+                background: transparent;
+                font-family: "DM Sans", sans-serif;
+            }
+            .confirmar-btn.pendiente {
+                border-color: #f59e0b;
+                color: #b45309;
+            }
+            .confirmar-btn.pendiente:hover {
+                background: #fef3c7;
+            }
+            .confirmar-btn.confirmado {
+                border-color: #10b981;
+                color: #065f46;
+                background: #d1fae5;
+            }
+            /* ─── CUMPLEAÑOS ─── */
+            .cumple-item {
+                background: linear-gradient(135deg, #fdf2f8, #fff);
+                border: 1.5px solid #f9a8d4;
+                border-radius: var(--radius-sm);
+                padding: 8px 10px;
+                margin-bottom: 6px;
+            }
+            .cumple-nombre {
+                font-weight: 600;
+                font-size: 0.82rem;
+                color: #be185d;
+            }
+            .cumple-detalle {
+                font-size: 0.72rem;
+                color: #9d174d;
+                margin-top: 2px;
+            }
+            /* ─── LOGO SPLASH ─── */
+        .logo-splash-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0);
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: background 0.3s ease, opacity 0.3s ease;
+        }
+        .logo-splash-overlay.activo {
+            pointer-events: all;
+            opacity: 1;
+            background: rgba(8, 20, 40, 0.82);
+            backdrop-filter: blur(8px);
+        }
+        .logo-splash-img {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 0 0 3px var(--primary), 0 4px 12px rgba(8,145,178,0.3);
+            transition: width 0.4s cubic-bezier(.34,1.56,.64,1), height 0.4s cubic-bezier(.34,1.56,.64,1), box-shadow 0.4s ease;
+            cursor: pointer;
+        }
+        .logo-splash-overlay.activo .logo-splash-img {
+            width: 120px;
+            height: 120px;
+            box-shadow: 0 0 0 5px var(--primary), 0 12px 40px rgba(8,145,178,0.5);
+        }
+        .logo-splash-nombre {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: white;
+            margin-top: 18px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.35s ease 0.3s, transform 0.35s ease 0.3s;
+        }
+        .logo-splash-overlay.activo .logo-splash-nombre {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .logo-splash-powered {
+            font-size: 0.82rem;
+            color: var(--primary);
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-top: 8px;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.3s ease 0.45s, transform 0.3s ease 0.45s;
+        }
+        .logo-splash-overlay.activo .logo-splash-powered {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .topbar-brand img {
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+        .topbar-brand img:hover {
+            transform: scale(1.08);
+        }
+            /* Scrollbar */
+            ::-webkit-scrollbar {
+                width: 6px;
+                height: 6px;
+            }
+            ::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            ::-webkit-scrollbar-thumb {
+                background: var(--border);
+                border-radius: 99px;
+            }
+            ::-webkit-scrollbar-thumb:hover {
+                background: var(--text-3);
+            }
+
+            /* FC responsive */
+            @media (max-width: 480px) {
+                .fc-toolbar {
+                    flex-wrap: wrap;
+                    gap: 6px;
+                }
+                .fc-toolbar-chunk {
+                    display: flex;
+                    align-items: center;
+                }
+                .fc-toolbar-title {
+                    font-size: 0.95rem !important;
+                }
+                .fc-button {
+                    padding: 4px 8px !important;
+                    font-size: 0.72rem !important;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- AUTH SCREEN -->
+        <div id="auth-container">
+            <img
+                src="https://static.wixstatic.com/media/026710_50959c5ad2e64afebc82443b2991fd81~mv2.jpg"
+                alt="Ortho Smile SJR" />
+            <h2>Ortho Smile SJR</h2>
+            <p>Conectando con el sistema...</p>
+        </div>
+
+        <div id="printArea"></div>
+
+        <!-- MAIN APP -->
+        <div id="app-container" style="display: none">
+            <!-- TOP BAR -->
+            <header class="topbar">
+                <button class="icon-btn menu-toggle" onclick="toggleSidebar()" title="Menú">
+                    <i class="ph-bold ph-list"></i>
+                </button>
+                <div class="topbar-brand">
+                    <img
+                        src="https://static.wixstatic.com/media/026710_50959c5ad2e64afebc82443b2991fd81~mv2.jpg"
+                        alt="Logo"
+                        onclick="abrirLogoSplash()" />
+                    <div class="topbar-brand-text">
+                        <h1 id="nombreConsultorio">Ortho Smile SJR</h1>
+                        <span>AxoCitas Pro v1.2</span>
+                    </div>
+                </div>
+                <div class="topbar-actions">
+                    <div id="globalSearchWrap" style="position: relative">
+                        <div
+                            style="
+                                display: flex;
+                                align-items: center;
+                                gap: 6px;
+                                background: var(--surface2);
+                                border: 1.5px solid var(--border);
+                                border-radius: var(--radius-sm);
+                                padding: 0 10px;
+                                height: 36px;
+                                min-width: 200px;
+                                transition: border-color 0.15s;
+                            ">
+                            <i
+                                class="ph-bold ph-magnifying-glass"
+                                style="color: var(--text-3); font-size: 0.95rem; flex-shrink: 0"></i>
+                            <input
+                                type="text"
+                                id="globalSearchInput"
+                                placeholder="Buscar paciente, cita, pago..."
+                                autocomplete="off"
+                                style="
+                                    border: none;
+                                    background: transparent;
+                                    outline: none;
+                                    font-size: 0.82rem;
+                                    color: var(--text-1);
+                                    width: 100%;
+                                    font-family: &quot;DM Sans&quot;, sans-serif;
+                                "
+                                oninput="busquedaGlobal(this.value)"
+                                onfocus="mostrarResultadosGlobal()" />
+                        </div>
+                        <div
+                            id="globalSearchDropdown"
+                            style="
+                                display: none;
+                                position: absolute;
+                                top: calc(100% + 6px);
+                                right: 0;
+                                width: 360px;
+                                background: var(--surface);
+                                border: 1.5px solid var(--border);
+                                border-radius: var(--radius);
+                                box-shadow: var(--shadow-lg);
+                                z-index: 5000;
+                                max-height: 400px;
+                                overflow-y: auto;
+                            "></div>
+                    </div>
+                    <div id="recepChipContainer"></div>
+                    <button class="icon-btn" onclick="toggleDarkMode()" title="Cambiar tema">
+                        <i class="ph-bold ph-sun" id="iconSun"></i>
+                        <i class="ph-bold ph-moon" id="iconMoon" style="display: none"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- RECEP LOGIN -->
+            <div class="recep-login-overlay" id="recepLoginOverlay">
+                <div class="recep-login-box">
+                    <div id="recepVistaSeleccion">
+                        <img
+                            src="https://static.wixstatic.com/media/026710_50959c5ad2e64afebc82443b2991fd81~mv2.jpg"
+                            alt="Logo"
+                            style="
+                                width: 56px;
+                                height: 56px;
+                                border-radius: 50%;
+                                margin: 0 auto 10px;
+                                display: block;
+                            " />
+                        <h2>Iniciar turno</h2>
+                        <p>Selecciona tu nombre para comenzar</p>
+                        <div class="recep-lista" id="recepLista"></div>
+                        <div style="border-top: 1px solid var(--border); padding-top: 14px; margin-top: 4px">
+                            <button
+                                class="btn btn-full"
+                                onclick="mostrarVistaAdmin()"
+                                style="
+                                    background: #6366f1;
+                                    color: white;
+                                    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+                                ">
+                                <i class="ph-bold ph-lock-key"></i>Entrar como Administrador
+                            </button>
+                        </div>
+                    </div>
+                    <div id="recepVistaPassword" style="display: none">
+                        <div
+                            class="logo-icon"
+                            style="
+                                display: flex;
+                                justify-content: center;
+                                font-size: 2.5rem;
+                                color: var(--primary);
+                                margin-bottom: 8px;
+                            ">
+                            <i class="ph-bold ph-lock-simple"></i>
+                        </div>
+                        <h2 id="recepPwdNombre" style="margin-bottom: 4px"></h2>
+                        <p>Ingresa tu contraseña</p>
+                        <input
+                            type="password"
+                            id="recepPwdInput"
+                            placeholder="Contraseña"
+                            style="text-align: center; font-size: 1.1rem; letter-spacing: 4px; margin-bottom: 10px"
+                            onkeydown="if(event.key==='Enter') confirmarPasswordRecep()" />
+                        <p
+                            id="recepPwdError"
+                            style="color: var(--danger); font-size: 0.82rem; margin: 0 0 10px; display: none">
+                            Contraseña incorrecta
+                        </p>
+                        <div style="display: flex; gap: 8px">
+                            <button class="btn btn-success" style="flex: 1" onclick="confirmarPasswordRecep()">
+                                <i class="ph-bold ph-sign-in"></i>Entrar
+                            </button>
+                            <button class="btn btn-ghost" onclick="volverSeleccion()">
+                                <i class="ph-bold ph-arrow-left"></i>Volver
+                            </button>
+                        </div>
+                    </div>
+                    <div id="recepVistaAdminLogin" style="display: none">
+                        <div
+                            style="
+                                display: flex;
+                                justify-content: center;
+                                font-size: 2.5rem;
+                                color: #6366f1;
+                                margin-bottom: 8px;
+                            ">
+                            <i class="ph-bold ph-shield-check"></i>
+                        </div>
+                        <h2>Acceso Administrador</h2>
+                        <p>Ingresa la contraseña de administrador</p>
+                        <input
+                            type="password"
+                            id="recepAdminPwdInput"
+                            placeholder="Contraseña admin"
+                            style="text-align: center; font-size: 1.1rem; letter-spacing: 4px; margin-bottom: 10px"
+                            onkeydown="if(event.key==='Enter') confirmarAdminDesdeLogin()" />
+                        <p
+                            id="recepAdminPwdError"
+                            style="color: var(--danger); font-size: 0.82rem; margin: 0 0 10px; display: none">
+                            Contraseña incorrecta
+                        </p>
+                        <div style="display: flex; gap: 8px">
+                            <button
+                                class="btn"
+                                style="flex: 1; background: #6366f1; color: white"
+                                onclick="confirmarAdminDesdeLogin()">
+                                <i class="ph-bold ph-lock-key"></i>Entrar como Admin
+                            </button>
+                            <button class="btn btn-ghost" onclick="volverSeleccion()">
+                                <i class="ph-bold ph-arrow-left"></i>Volver
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BODY -->
+            <div class="app-body">
+                <!-- LEFT SIDEBAR -->
+                <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+                <aside class="sidebar" id="sidebar">
+                    <div class="sidebar-section-title">Acciones</div>
+                    <button class="nav-btn primary-action" onclick="abrirModal('nuevaCita'); closeSidebar()">
+                        <i class="ph-bold ph-calendar-plus"></i>Nueva Cita
+                    </button>
+                    <button class="nav-btn success-action" onclick="abrirModal('corteCaja'); closeSidebar()">
+                        <i class="ph-bold ph-cash-register"></i>Corte de Caja
+                    </button>
+                    <div class="sidebar-divider"></div>
+                    <div class="sidebar-section-title">Gestión</div>
+                    <button class="nav-btn" onclick="abrirModal('focusPacientes'); closeSidebar()">
+                        <i class="ph-bold ph-users"></i>Pacientes
+                    </button>
+                    <button class="nav-btn" onclick="mostrarRegistros(); closeSidebar()">
+                        <i class="ph-bold ph-database"></i>Registros
+                    </button>
+                    <button class="nav-btn" onclick="exportarCSV()">
+                        <i class="ph-bold ph-download-simple"></i>Exportar CSV
+                    </button>
+                    <button class="nav-btn" onclick="abrirModal('informeMensual'); closeSidebar()">
+                        <i class="ph-bold ph-file-text"></i>Informe Mensual
+                    </button>
+                    <div class="sidebar-divider"></div>
+                    <div class="sidebar-section-title">Sistema</div>
+                    <button class="nav-btn" onclick="abrirAdminLogin(); closeSidebar()">
+                        <i class="ph-bold ph-lock-key"></i>Admin / Finanzas
+                    </button>
+                    <button class="nav-btn" onclick="abrirModal('configConsultorio'); closeSidebar()">
+                        <i class="ph-bold ph-gear"></i>Configuración
+                    </button>
+
+                    <!-- FOOTER BRANDING -->
+                    <div
+                        style="
+                            margin-top: auto;
+                            padding-top: 20px;
+                            text-align: center;
+                            font-family: &quot;Outfit&quot;, sans-serif;
+                            font-size: 0.65rem;
+                            font-weight: 700;
+                            color: var(--text-3);
+                            letter-spacing: 0.08em;
+                            text-transform: uppercase;
+                            opacity: 0.85;
+                        ">
+                        Powered by
+                        <a
+                            href="https://www.axotek.me"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style="
+                                color: var(--primary);
+                                font-weight: 800;
+                                text-decoration: none;
+                                transition: color 0.15s;
+                            "
+                            onmouseover="this.style.color='var(--primary-light)'"
+                            onmouseout="this.style.color='var(--primary)'"
+                            >Axotek</a
+                        >
+                    </div>
+                </aside>
+
+                <!-- MAIN CONTENT -->
+                <main class="main-content">
+                    <!-- Stats -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon blue"><i class="ph-bold ph-calendar-check"></i></div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="statCitasHoy">0</div>
+                                <div class="stat-label">Citas Hoy</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon amber"><i class="ph-bold ph-calendar-dots"></i></div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="statCitasMes">0</div>
+                                <div class="stat-label">Citas este Mes</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon green"><i class="ph-bold ph-users"></i></div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="statPacientes">0</div>
+                                <div class="stat-label">Pacientes</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon purple"><i class="ph-bold ph-currency-dollar"></i></div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="statIngresosDia">$0</div>
+                                <div class="stat-label">Ingresos Hoy</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon red"><i class="ph-bold ph-warning"></i></div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="statCitasPendientes">0</div>
+                                <div class="stat-label">Pend. de Pago</div>
+                            </div>
+                        </div>
+                        <div
+                            class="stat-card stat-card-action"
+                            onclick="abrirModalNuevoIngreso()"
+                            title="Registrar ingreso extra">
+                            <div class="stat-icon" style="background: #fce7f3; color: #be185d">
+                                <i class="ph-bold ph-plus-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-value" style="font-size: 0.95rem; color: var(--text-2)">Registrar</div>
+                                <div class="stat-label" style="color: #be185d; font-weight: 700">Nuevo Ingreso</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sync bar -->
+                    <div class="sync-bar">
+                        <div class="sync-dot"></div>
+                        <span id="ultimaGuardadoNube">Conectando...</span>
+                    </div>
+
+                    <!-- Calendar -->
+                    <div class="calendar-card">
+                        <div id="calendar"></div>
+                    </div>
+
+                    <!-- Records -->
+                    <div id="vistaRegistros" style="display: none">
+                        <div class="records-card">
+                            <div class="records-header">
+                                <i class="ph-bold ph-database" style="color: var(--primary); font-size: 1.2rem"></i>
+                                <h2>Registro de Citas y Pagos</h2>
+                            </div>
+                            <div style="padding: 16px">
+                                <div class="tabs-nav">
+                                    <button class="tab-btn activo" onclick="cambiarTabRegistro('citas', this)">
+                                        Citas
+                                    </button>
+                                    <button class="tab-btn" onclick="cambiarTabRegistro('pagos', this)">Pagos</button>
+                                </div>
+                                <div id="tabCitas">
+                                    <div
+                                        style="
+                                            display: grid;
+                                            gap: 10px;
+                                            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                                            margin-bottom: 14px;
+                                        ">
+                                        <input type="date" id="filtroFecha" onchange="filtrarDatos()" />
+                                        <input
+                                            type="text"
+                                            id="filtroPaciente"
+                                            placeholder="Buscar paciente..."
+                                            onkeyup="filtrarDatos()" />
+                                        <select id="filtroMedico" onchange="filtrarDatos()">
+                                            <option value="">Todos los dentistas</option>
+                                        </select>
+                                        <select id="filtroEstado" onchange="filtrarDatos()">
+                                            <option value="">Todos los estados</option>
+                                            <option value="pendiente">Pendiente</option>
+                                            <option value="confirmada">Confirmada</option>
+                                            <option value="completada">Completada</option>
+                                            <option value="cancelada">Cancelada</option>
+                                        </select>
+                                    </div>
+                                    <div style="overflow-x: auto">
+                                        <table class="tabla-datos">
+                                            <thead>
+                                                <tr>
+                                                    <th>Fecha / Hora</th>
+                                                    <th>Paciente</th>
+                                                    <th>Médico</th>
+                                                    <th>Tipo</th>
+                                                    <th>Estado</th>
+                                                    <th>Pago</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tablaCitas"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div id="tabPagos" style="display: none">
+                                    <div
+                                        style="
+                                            display: grid;
+                                            gap: 10px;
+                                            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                                            margin-bottom: 14px;
+                                        ">
+                                        <input
+                                            type="date"
+                                            id="filtroPagoFechaDesde"
+                                            placeholder="Desde"
+                                            onchange="filtrarPagos()" />
+                                        <input
+                                            type="date"
+                                            id="filtroPagoFechaHasta"
+                                            placeholder="Hasta"
+                                            onchange="filtrarPagos()" />
+                                        <div class="buscador-paciente-wrap">
+                                            <i class="ph-bold ph-magnifying-glass buscador-icono"></i>
+                                            <input
+                                                type="text"
+                                                class="buscador-paciente-input"
+                                                id="filtroPagoPaciente"
+                                                placeholder="Buscar paciente..."
+                                                autocomplete="off"
+                                                oninput="filtrarPagos()" />
+                                        </div>
+                                        <select id="filtroPagoMetodo" onchange="filtrarPagos()">
+                                            <option value="">Todos los métodos</option>
+                                            <option value="efectivo">Efectivo</option>
+                                            <option value="tarjeta">Tarjeta</option>
+                                            <option value="transferencia">Transferencia</option>
+                                            <option value="ajuste">Ajustes Manuales</option>
+                                            <option value="devolucion">Devoluciones</option>
+                                        </select>
+                                        <button class="btn btn-primary btn-sm" onclick="filtrarPagos()">
+                                            <i class="ph-bold ph-funnel"></i>Filtrar
+                                        </button>
+                                    </div>
+                                    <div style="overflow-x: auto">
+                                        <table class="tabla-datos">
+                                            <thead>
+                                                <tr>
+                                                    <th>Fecha</th>
+                                                    <th>Paciente</th>
+                                                    <th>Servicio</th>
+                                                    <th>Monto</th>
+                                                    <th>Método</th>
+                                                    <th>Médico</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tablaPagos"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+
+                <!-- RIGHT PANEL (Today's appointments) -->
+                <aside class="right-panel">
+                    <div>
+                        <div class="panel-title">
+                            <i class="ph-bold ph-bell-ringing" style="color: var(--primary)"></i>Citas de Hoy
+                            <span
+                                id="badgeSinConfirmar"
+                                style="
+                                    display: none;
+                                    margin-left: auto;
+                                    background: #fef3c7;
+                                    color: #b45309;
+                                    font-size: 0.65rem;
+                                    font-weight: 700;
+                                    padding: 2px 7px;
+                                    border-radius: 99px;
+                                "></span>
+                        </div>
+                        <div id="alertasContainer"><div class="empty-state">Cargando...</div></div>
+                    </div>
+                    <div id="seccionCumpleanios" style="display: none">
+                        <div class="panel-title"><i class="ph-bold ph-cake" style="color: #ec4899"></i>Cumpleaños</div>
+                        <div id="cumpleaniosContainer"></div>
+                    </div>
+                    <div>
+                        <div class="panel-title">
+                            <i class="ph-bold ph-clock-countdown" style="color: var(--accent)"></i>Próximas Citas
+                        </div>
+                        <div id="proximasCitasContainer"><div class="empty-state">Cargando...</div></div>
+                    </div>
+                </aside>
+            </div>
+
+            <!-- BOTTOM NAV (mobile) -->
+            <nav class="bottom-nav">
+                <button class="bottom-nav-item active" onclick="scrollToCalendar()">
+                    <i class="ph-bold ph-calendar-blank"></i>
+                    Calendario
+                </button>
+                <button class="bottom-nav-item" onclick="abrirModal('focusPacientes')">
+                    <i class="ph-bold ph-users"></i>
+                    Pacientes
+                </button>
+                <button class="bottom-nav-fab" onclick="abrirModal('nuevaCita')">
+                    <i class="ph-bold ph-plus"></i>
+                </button>
+                <button class="bottom-nav-item" onclick="abrirModal('corteCaja')">
+                    <i class="ph-bold ph-cash-register"></i>
+                    Caja
+                </button>
+                <button class="bottom-nav-item" onclick="toggleSidebar()">
+                    <i class="ph-bold ph-dots-three-outline"></i>
+                    Más
+                </button>
+            </nav>
+        </div>
+
+        <!-- ═══════════════════ MODALS ═══════════════════ -->
+        <div class="modal-backdrop" id="modalFondo" onclick="cerrarModales()"></div>
+
+        <!-- Firebase Config Modal -->
+        <div class="modal" id="configModal">
+            <div class="modal-header">
+                <h2><i class="ph-bold ph-database"></i>Conectar Firebase</h2>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-2); font-size: 0.875rem; margin-bottom: 14px">
+                    Para usar la app necesitas tu <strong>firebaseConfig</strong>. Pégalo directamente o carga un
+                    archivo .txt/.json.
+                </p>
+                <div class="tabs-nav" style="margin-bottom: 14px">
+                    <button class="tab-btn activo" id="cfgTabPegar" onclick="toggleConfigTab('pegar')">
+                        📋 Pegar config
+                    </button>
+                    <button class="tab-btn" id="cfgTabArchivo" onclick="toggleConfigTab('archivo')">
+                        📂 Cargar archivo
+                    </button>
+                </div>
+                <div id="cfgPanelPegar">
+                    <label>Pega tu firebaseConfig:</label>
+                    <textarea
+                        id="firebaseConfigInput"
+                        rows="8"
+                        style="font-family: monospace; font-size: 0.8rem"
+                        placeholder="Pega aquí el objeto firebaseConfig..."></textarea>
+                </div>
+                <div id="cfgPanelArchivo" style="display: none">
+                    <label>Archivo .txt o .json:</label>
+                    <div
+                        style="
+                            border: 2px dashed var(--border);
+                            border-radius: var(--radius);
+                            padding: 24px;
+                            text-align: center;
+                            cursor: pointer;
+                            transition: border-color 0.15s;
+                        "
+                        onclick="document.getElementById('cfgArchivoInput').click()">
+                        <i
+                            class="ph-bold ph-file-text"
+                            style="font-size: 2rem; color: var(--text-3); display: block; margin: 0 auto 8px"></i>
+                        <p style="margin: 0; color: var(--text-2); font-size: 0.875rem">
+                            Clic para seleccionar archivo
+                        </p>
+                        <p
+                            id="cfgArchivoNombre"
+                            style="margin: 6px 0 0; font-size: 0.82rem; font-weight: 600; color: var(--primary)"></p>
+                    </div>
+                    <input
+                        type="file"
+                        id="cfgArchivoInput"
+                        accept=".txt,.json"
+                        style="display: none"
+                        onchange="cargarArchivoCfgInicial(this.files[0])" />
+                    <textarea
+                        id="cfgArchivoContenido"
+                        rows="5"
+                        style="font-family: monospace; font-size: 0.8rem; margin-top: 10px"
+                        readonly></textarea>
+                </div>
+                <div
+                    id="cfgError"
+                    style="
+                        display: none;
+                        margin-top: 10px;
+                        padding: 10px;
+                        background: #fef2f2;
+                        border: 1px solid #fca5a5;
+                        border-radius: var(--radius-sm);
+                        font-size: 0.85rem;
+                        color: #dc2626;
+                    "></div>
+                <div style="margin-top: 16px; text-align: right">
+                    <button class="btn btn-primary" onclick="saveConfigAndInitialize()">
+                        <i class="ph-bold ph-plugs-connected"></i>Guardar y Conectar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nueva / Editar Cita -->
+        <div class="modal" id="nuevaCita">
+            <div class="modal-header">
+                <h2><i class="ph-bold ph-calendar-plus"></i><span id="tituloCita">Nueva Cita</span></h2>
+                <button class="modal-close" onclick="cerrarModales()"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="citaId" />
+                <div class="form-grid-2">
+                    <div>
+                        <label>Fecha de la Cita</label>
+                        <input type="date" id="fechaCita" required />
+                    </div>
+                    <div>
+                        <label>Hora de la Cita</label>
+                        <input type="time" id="horaCita" required />
+                    </div>
+                </div>
+                <label>Paciente</label>
+                <input type="hidden" id="pacienteCita" />
+                <div class="buscador-paciente-wrap">
+                    <i class="ph-bold ph-magnifying-glass buscador-icono"></i>
+                    <input
+                        type="text"
+                        class="buscador-paciente-input"
+                        id="buscadorPacienteInput"
+                        placeholder="Escribe el nombre del paciente..."
+                        autocomplete="off"
+                        oninput="filtrarBuscadorPaciente(this.value)"
+                        onfocus="filtrarBuscadorPaciente(this.value)" />
+                    <div class="buscador-dropdown" id="buscadorDropdown"></div>
+                </div>
+                <div class="buscador-seleccionado" id="buscadorSeleccionado">
+                    <span id="buscadorSeleccionadoNombre"></span>
+                    <button class="pac-clear" onclick="limpiarPacienteSeleccionado()">
+                        <i class="ph-bold ph-x"></i>
+                    </button>
+                </div>
+                <div style="margin-top: 6px">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="abrirModalRapidoPaciente()">
+                        <i class="ph-bold ph-user-plus"></i>Nuevo Paciente Rápido
+                    </button>
+                </div>
+                <label>Dentista</label>
+                <select id="medicoCita" onchange="validarEspecialidadVsProcedimiento()">
+                    <option value="">Seleccionar dentista...</option>
+                </select>
+                <label>Tipo de Procedimiento</label>
+                <select id="tipoCita" onchange="validarEspecialidadVsProcedimiento()"></select>
+                <div id="alertaEspecialidad" class="alerta-especialidad">
+                    <span id="alertaEspecialidadTexto"></span>
+                </div>
+                <label>Estado de la Cita</label>
+                <select id="estadoCita"></select>
+
+                <div class="pay-section">
+                    <div class="pay-section-title">
+                        <i class="ph-bold ph-currency-dollar"></i>Cobro de Transacción (Caja)
+                    </div>
+                    <div class="form-grid-2">
+                        <div>
+                            <label>Monto Pagado ($)</label>
+                            <input type="number" id="montoCita" min="0" step="0.01" placeholder="0.00" />
+                        </div>
+                        <div>
+                            <label>Método de Pago</label>
+                            <select id="metodoPago">
+                                <option value="pendiente">Pendiente (No registrar)</option>
+                                <option value="efectivo">Efectivo</option>
+                                <option value="tarjeta">Tarjeta</option>
+                                <option value="transferencia">Transferencia</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <label>Motivo / Diagnóstico</label>
+                <textarea id="motivoCita" rows="3" placeholder="Motivo de consulta..."></textarea>
+                <label>Recordatorio</label>
+                <select id="recordatorioCita">
+                    <option value="ninguno">Sin recordatorio</option>
+                    <option value="1dia">1 día antes</option>
+                    <option value="2dias">2 días antes</option>
+                    <option value="3dias">3 días antes</option>
+                </select>
+                <div class="wa-section" id="seccionWhatsapp">
+                    <div class="wa-section-title">
+                        <i class="ph-bold ph-whatsapp-logo"></i>Recordatorio por WhatsApp
+                    </div>
+                    <p style="font-size: 0.78rem; color: var(--text-2); margin-bottom: 8px">
+                        Se abrirá WhatsApp con mensaje prellenado.
+                    </p>
+                    <button
+                        type="button"
+                        class="btn btn-whatsapp btn-full btn-sm"
+                        onclick="enviarWhatsappRecordatorio()">
+                        <i class="ph-bold ph-whatsapp-logo"></i>Abrir WhatsApp
+                    </button>
+                </div>
+                <div
+                    style="display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; flex-wrap: wrap">
+                    <button class="btn btn-primary" onclick="guardarCita()">
+                        <i class="ph-bold ph-floppy-disk"></i>Guardar
+                    </button>
+                    <button class="btn btn-ghost" onclick="cerrarModales()">
+                        <i class="ph-bold ph-x"></i>Cancelar
+                    </button>
+                </div>
+                <div id="eliminarCitaContainer" style="display: none; margin-top: 10px">
+                    <button class="btn btn-danger btn-full" onclick="solicitarConfirmacionEliminar()">
+                        <i class="ph-bold ph-trash"></i>Eliminar Cita
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ver Cita -->
+        <div class="modal" id="verCita">
+            <div class="modal-header">
+                <h2><i class="ph-bold ph-info"></i>Detalles de la Cita</h2>
+                <button class="modal-close" onclick="cerrarModales()"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="verCitaId" />
+                <div id="detalleCitaContenido"></div>
+                <div style="margin-top: 14px; border-top: 1px solid var(--border); padding-top: 12px">
+                    <p style="font-size: 0.75rem; color: var(--text-2); margin-bottom: 8px; font-weight: 600">
+                        ENVIAR MENSAJE WHATSAPP
+                    </p>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap">
+                        <button
+                            class="btn btn-whatsapp btn-sm"
+                            style="flex: 1"
+                            onclick="enviarWhatsappDesdeCita('recordatorio')">
+                            <i class="ph-bold ph-bell"></i>Recordatorio
+                        </button>
+                        <button
+                            class="btn btn-whatsapp btn-sm"
+                            style="flex: 1"
+                            onclick="enviarWhatsappDesdeCita('confirmacion')">
+                            <i class="ph-bold ph-check-circle"></i>Confirmación
+                        </button>
+                        <button
+                            class="btn btn-whatsapp btn-sm"
+                            style="flex: 1"
+                            onclick="enviarWhatsappDesdeCita('cancelacion')">
+                            <i class="ph-bold ph-x-circle"></i>Cancelación
+                        </button>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 8px; margin-top: 12px; justify-content: flex-end; flex-wrap: wrap">
+                    <div id="btnPagoDevolucion"></div>
+                    <button class="btn btn-primary btn-sm" onclick="editarDesdeVista()">
+                        <i class="ph-bold ph-pencil-simple"></i>Editar
+                    </button>
+                    <button class="btn btn-ghost btn-sm" onclick="cerrarModales()">
+                        <i class="ph-bold ph-x"></i>Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pago Rápido -->
+        <div class="modal" id="pagoRapido">
+            <div class="modal-header">
+                <h2><i class="ph-bold ph-currency-dollar"></i>Registrar Pago Directo</h2>
+                <button class="modal-close" onclick="cerrarModales()"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="pagoRapidoCitaId" />
+                <div
+                    id="infoPagoRapido"
+                    style="
+                        background: var(--surface2);
+                        border: 1px solid var(--border);
+                        padding: 12px;
+                        border-radius: var(--radius-sm);
+                        margin-bottom: 14px;
+                        font-size: 0.875rem;
+                    "></div>
+                <div class="form-grid-2">
+                    <div>
+                        <label>Monto a Cobrar ($)</label
+                        ><input type="number" id="montoPagoRapido" min="0" step="0.01" placeholder="0.00" />
+                    </div>
+                    <div>
+                        <label>Método de Pago</label>
+                        <select id="metodoPagoRapido">
+                            <option value="efectivo">Efectivo</option>
+                            <option value="tarjeta">Tarjeta</option>
+                            <option value="transferencia">Transferencia</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-grid-2">
+                    <div><label>Fecha de Transacción</label><input type="date" id="fechaPagoRapido" /></div>
+                    <div>
+                        <label>Notas del cobro</label
+                        ><input type="text" id="notasPagoRapido" placeholder="Opcional..." />
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; gap: 10px; margin-top: 20px">
+                    <button class="btn btn-success" onclick="confirmarPagoRapido()">
+                        <i class="ph-bold ph-check-circle"></i>Confirmar y Registrar
+                    </button>
+                    <button class="btn btn-ghost" onclick="cerrarModales()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nuevo Paciente Rápido -->
+        <div class="modal" id="nuevoPacienteRapido" style="z-index: 1100">
+            <div class="modal-header">
+                <h2><i class="ph-bold ph-user-plus"></i>Nuevo Paciente Rápido</h2>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid-2">
+                    <div>
+                        <label>Nombre *</label
+                        ><input type="text" id="rNombrePaciente" placeholder="Nombre completo" autofocus />
+                    </div>
+                    <div>
+                        <label>Teléfono</label
+                        ><input type="tel" id="rTelefonoPaciente" placeholder="Ej: 644-123-4567" />
+                    </div>
+                </div>
+                <div class="form-grid-2">
+                    <div><label>Fecha de Nacimiento</label><input type="date" id="rNacimientoPaciente" /></div>
+                    <div>
+                        <label>Género</label>
+                        <select id="rGeneroPaciente">
+                            <option value="">Seleccionar...</option>
+                            <option value="masculino">Masculino</option>
+                            <option value="femenino">Femenino</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+                </div>
+                <label>Email</label><input type="email" id="rEmailPaciente" placeholder="correo@ejemplo.com" />
+                <label>Notas / Alergias</label
+                ><textarea id="rNotasPaciente" rows="2" placeholder="Información médica relevante..."></textarea>
+                <div style="display: flex; justify-content: space-between; gap: 10px; margin-top: 18px">
+                    <button class="btn btn-success" onclick="guardarPacienteRapido()">
+                        <i class="ph-bold ph-check-circle"></i>Guardar y volver
+                    </button>
+                    <button class="btn btn-ghost" onclick="cancelarPacienteRapido()">
+                        <i class="ph-bold ph-x"></i>Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Devolución -->
+        <div class="modal" id="devolucion">
+            <div class="modal-header">
+                <h2><i class="ph-bold ph-arrow-counter-clockwise"></i>Registrar Devolución</h2>
+                <button class="modal-close" onclick="cerrarModales()"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="devolucionCitaId" />
+                <div
+                    id="infoDevolucion"
+                    style="
+                        background: #fef3c7;
+                        border: 1px solid #f59e0b;
+                        padding: 12px;
+                        border-radius: var(--radius-sm);
+                        margin-bottom: 14px;
+                        font-size: 0.875rem;
+                    "></div>
+                <label>Motivo de la devolución</label>
+                <textarea id="motivoDevolucion" rows="3" placeholder="Describe el motivo..."></textarea>
+                <div class="form-grid-2">
+                    <div>
+                        <label>Monto a devolver ($)</label
+                        ><input type="number" id="montoDevolucion" min="0" step="0.01" placeholder="0.00" />
+                    </div>
+                    <div><label>Fecha de Devolución</label><input type="date" id="fechaDevolucion" /></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; gap: 10px; margin-top: 20px">
+                    <button class="btn btn-orange" onclick="confirmarDevolucion()">
+                        <i class="ph-bold ph-check-circle"></i>Confirmar Devolución
+                    </button>
+                    <button class="btn btn-ghost" onclick="cerrarModales()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pacientes -->
+        <div class="modal" id="focusPacientes">
+            <div class="modal-header">
+                <h2><i class="ph-bold ph-users"></i>Gestionar Pacientes</h2>
+                <button class="modal-close" onclick="cerrarModales()"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid-2">
+                    <div>
+                        <label>Nombre</label><input type="text" id="nombrePaciente" placeholder="Nombre completo" />
+                    </div>
+                    <div>
+                        <label>Teléfono</label><input type="tel" id="telefonoPaciente" placeholder="Ej: 442-123-4567" />
+                    </div>
+                </div>
+                <div class="form-grid-2">
+                    <div><label>Fecha de Nacimiento</label><input type="date" id="nacimientoPaciente" /></div>
+                    <div>
+                        <label>Género</label>
+                        <select id="generoPaciente">
+                            <option value="">Seleccionar...</option>
+                            <option value="masculino">Masculino</option>
+                            <option value="femenino">Femenino</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+                </div>
+                <label>Email</label><input type="email" id="emailPaciente" placeholder="correo@ejemplo.com" />
+                <label>Notas / Alergias</label
+                ><textarea id="notasPaciente" rows="2" placeholder="Información médica relevante..."></textarea>
+                <div style="text-align: right; margin-top: 14px">
+                    <button class="btn btn-primary" onclick="agregarPaciente()">
+                        <i class="ph-bold ph-plus-circle"></i>Agregar Paciente
+                    </button>
+                </div>
+                <div id="listaPacientes" class="lista-gestion"></div>
+            </div>
+        </div>
+
+        <!-- Corte de Caja -->
+        <div class="modal" id="corteCaja">
+            <div class="modal-header">
+                <h2><i class="ph-bold ph-cash-register"></i>Corte de Caja</h2>
+                <button class="modal-close" onclick="cerrarModales()"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div
+                    style="
+                        background: var(--surface2);
+                        border-radius: var(--radius-sm);
+                        padding: 10px 14px;
+                        margin-bottom: 14px;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        font-size: 0.875rem;
+                        border: 1px solid var(--border);
+                    ">
+                    <i class="ph-bold ph-identification-badge" style="color: var(--primary); font-size: 1.2rem"></i>
+                    <span>Recepcionista: <strong id="corteRecepNombre" style="color: var(--primary)">—</strong></span>
+                </div>
+                <div style="display: flex; gap: 10px; margin-bottom: 16px; align-items: flex-end; flex-wrap: wrap">
+                    <div style="flex: 1; min-width: 120px">
+                        <label>Desde</label><input type="date" id="corteDesde" />
+                    </div>
+                    <div style="flex: 1; min-width: 120px">
+                        <label>Hasta</label><input type="date" id="corteHasta" />
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="calcularCorte()">
+                        <i class="ph-bold ph-calculator"></i>Calcular
+                    </button>
+                </div>
+                <div id="resultadosCorte">
+                    <div class="empty-state">Selecciona un rango de fechas y presiona Calcular.</div>
+                </div>
+                <div
+                    style="
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-top: 14px;
+                        flex-wrap: wrap;
+                        gap: 8px;
+                    ">
+                    <span
+                        id="corteGuardadoBadge"
+                        style="display: none; font-size: 0.8rem; color: var(--secondary); font-weight: 600"></span>
+                    <div style="display: flex; gap: 8px; margin-left: auto; flex-wrap: wrap">
+                        <button class="btn btn-ghost btn-sm" onclick="verHistorialCortes()">
+                            <i class="ph-bold ph-clock-counter-clockwise"></i>Historial
+                        </button>
+                        <button
+                            class="btn btn-ghost btn-sm"
+                            id="btnDescargarCSV"
+                            onclick="descargarCorteCSV()"
+                            style="display: none">
+                            <i class="ph-bold ph-download-simple"></i>CSV
+                        </button>
+                        <button class="btn btn-primary btn-sm" onclick="imprimirCorte()">
+                            <i class="ph-bold ph-printer"></i>Imprimir
+                        </button>
+                        <button
+                            class="btn btn-danger btn-sm"
+                            id="btnCerrarTurno"
+                            onclick="cerrarTurnoRecepcionista()"
+                            style="display: none">
+                            <i class="ph-bold ph-sign-out"></i>Cerrar turno
+                        </button>
+                    </div>
+                </div>
+                <div id="historialCortesPanel" class="historial-cortes-panel"></div>
+            </div>
+        </div>
+
+        <!-- Config Consultorio -->
+        <div class="modal" id="configConsultorio">
+            <div class="modal-header">
+                <h2><i class="ph-bold ph-gear"></i>Configuración del Consultorio</h2>
+                <button class="modal-close" onclick="cerrarModales()"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="modal-body">
+                <label>Nombre del Consultorio</label
+                ><input type="text" id="configNombreConsultorio" placeholder="Ej: Ortho Smile SJR" />
+                <label>Dirección</label><input type="text" id="configDireccion" placeholder="Dirección completa" />
+                <label>Teléfono</label><input type="tel" id="configTelefono" placeholder="442-000-0000" />
+                <label>Tarifa de Consulta General ($)</label
+                ><input type="number" id="configTarifa" min="0" step="0.01" placeholder="500.00" />
+                <div style="text-align: right; margin-top: 16px">
+                    <button class="btn btn-primary" onclick="guardarConfig()">
+                        <i class="ph-bold ph-floppy-disk"></i>Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nuevo Ingreso -->
+        <div class="modal" id="nuevoIngreso">
+            <div class="modal-header">
+                <h2><i class="ph-bold ph-plus-circle" style="color: #be185d"></i>Registrar Nuevo Ingreso</h2>
+                <button class="modal-close" onclick="cerrarModales()"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="modal-body">
+                <label>Concepto del Ingreso</label>
+                <input
+                    type="text"
+                    id="nuevoIngresoConcepto"
+                    placeholder="Ej: Venta de kit dental, Anticipo, Otro servicio..." />
+                <div style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px" id="conceptosRapidos">
+                    <button class="btn btn-xs btn-ghost" onclick="setConcepto('Anticipo de tratamiento')">
+                        Anticipo
+                    </button>
+                    <button class="btn btn-xs btn-ghost" onclick="setConcepto('Venta de kit dental')">
+                        Kit dental
+                    </button>
+                    <button class="btn btn-xs btn-ghost" onclick="setConcepto('Venta de retenedor')">Retenedor</button>
+                    <button class="btn btn-xs btn-ghost" onclick="setConcepto('Pago de mensualidad ortodoncia')">
+                        Mensualidad ortodoncia
+                    </button>
+                    <button class="btn btn-xs btn-ghost" onclick="setConcepto('Radiografía extra')">Radiografía</button>
+                    <button class="btn btn-xs btn-ghost" onclick="setConcepto('Otro servicio')">Otro</button>
+                </div>
+                <div class="form-grid-2" style="margin-top: 4px">
+                    <div>
+                        <label>Monto ($)</label>
+                        <input type="number" id="nuevoIngresoMonto" min="0" step="0.01" placeholder="0.00" />
+                    </div>
+                    <div>
+                        <label>Método de Pago</label>
+                        <select id="nuevoIngresoMetodo">
+                            <option value="efectivo">💵 Efectivo</option>
+                            <option value="tarjeta">💳 Tarjeta</option>
+                            <option value="transferencia">🏦 Transferencia</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-grid-2">
+                    <div>
+                        <label>Fecha</label>
+                        <input type="date" id="nuevoIngresoFecha" />
+                    </div>
+                    <div>
+                        <label>Paciente (opcional)</label>
+                        <div class="buscador-paciente-wrap" id="buscadorNuevoIngresoWrap">
+                            <i class="ph-bold ph-magnifying-glass buscador-icono"></i>
+                            <input
+                                type="text"
+                                class="buscador-paciente-input"
+                                id="buscadorNuevoIngresoInput"
+                                placeholder="Buscar paciente..."
+                                autocomplete="off"
+                                oninput="filtrarBuscadorNuevoIngreso(this.value)"
+                                onfocus="filtrarBuscadorNuevoIngreso(this.value)" />
+                            <div class="buscador-dropdown" id="buscadorNuevoIngresoDropdown"></div>
+                        </div>
+                        <div class="buscador-seleccionado" id="buscadorNuevoIngresoSeleccionado">
+                            <span id="buscadorNuevoIngresoNombre"></span>
+                            <button class="pac-clear" onclick="limpiarPacienteNuevoIngreso()">
+                                <i class="ph-bold ph-x"></i>
+                            </button>
+                        </div>
+                        <input type="hidden" id="nuevoIngresoPaciente" />
+                    </div>
+                </div>
+                <label>Notas adicionales</label>
+                <input type="text" id="nuevoIngresoNotas" placeholder="Opcional..." />
+                <div style="display: flex; justify-content: space-between; gap: 10px; margin-top: 20px">
+                    <button class="btn btn-success" onclick="guardarNuevoIngreso()">
+                        <i class="ph-bold ph-check-circle"></i>Guardar Ingreso
+                    </button>
+                    <button class="btn btn-ghost" onclick="cerrarModales()">
+                        <i class="ph-bold ph-x"></i>Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Expediente Clínico -->
+        <div class="modal" id="expedientePaciente" style="max-width: 680px">
+            <div class="modal-header">
+                <h2><i class="ph-bold ph-folder-user"></i><span id="expTitulo">Expediente</span></h2>
+                <button class="modal-close" onclick="cerrarModales()"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div id="expContenido"></div>
+            </div>
+        </div>
+        <!-- Confirmar Eliminar -->
+        <div class="modal" id="confirmarEliminar">
+            <div class="modal-header">
+                <h2><i class="ph-bold ph-warning" style="color: var(--danger)"></i>Confirmar Eliminación</h2>
+            </div>
+            <div class="modal-body">
+                <p id="mensajeEliminar" style="margin-bottom: 20px; color: var(--text-2)">¿Estás seguro?</p>
+                <div style="display: flex; justify-content: flex-end; gap: 10px">
+                    <button class="btn btn-danger" onclick="confirmarEliminacionDefinitiva()">
+                        <i class="ph-bold ph-check"></i>Sí, Eliminar
+                    </button>
+                    <button class="btn btn-ghost" onclick="cerrarModales()">
+                        <i class="ph-bold ph-x"></i>Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informe Mensual -->
+        <div class="modal" id="informeMensual">
+            <div class="modal-header">
+                <h2><i class="ph-bold ph-file-text"></i>Generar Informe Mensual</h2>
+                <button class="modal-close" onclick="cerrarModales()"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-2); font-size: 0.875rem; margin-bottom: 14px">
+                    Genera y descarga un resumen completo del mes: estadísticas de citas, desempeño de los dentistas,
+                    métodos de pago y flujos de caja.
+                </p>
+                <div class="form-grid-2">
+                    <div>
+                        <label>Seleccionar Mes</label>
+                        <select id="informeMes">
+                            <option value="01">Enero</option>
+                            <option value="02">Febrero</option>
+                            <option value="03">Marzo</option>
+                            <option value="04">Abril</option>
+                            <option value="05">Mayo</option>
+                            <option value="06">Junio</option>
+                            <option value="07">Julio</option>
+                            <option value="08">Agosto</option>
+                            <option value="09">Septiembre</option>
+                            <option value="10">Octubre</option>
+                            <option value="11">Noviembre</option>
+                            <option value="12">Diciembre</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Año</label>
+                        <select id="informeAnio">
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                            <option value="2026">2026</option>
+                            <option value="2027">2027</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px">
+                    <button class="btn btn-primary btn-full" onclick="descargarInformeMensualCSV()">
+                        <i class="ph-bold ph-download-simple"></i>Descargar Excel / CSV
+                    </button>
+                    <button class="btn btn-success btn-full" onclick="imprimirInformeMensual()">
+                        <i class="ph-bold ph-printer"></i>Vista de Impresión / Guardar PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Login -->
+        <div class="admin-login-overlay" id="adminLoginOverlay">
+            <div class="admin-login-box">
+                <i
+                    class="ph-bold ph-lock-key"
+                    style="font-size: 2.5rem; color: var(--primary); display: block; text-align: center"></i>
+                <h2>Panel de Control y Finanzas</h2>
+                <p>Ingresa la contraseña para acceder</p>
+                <input
+                    type="password"
+                    id="adminPasswordInput"
+                    placeholder="Contraseña"
+                    style="margin-bottom: 10px; text-align: center; letter-spacing: 4px"
+                    onkeydown="if(event.key==='Enter') verificarPasswordAdmin()" />
+                <p
+                    id="adminPasswordError"
+                    style="color: var(--danger); font-size: 0.82rem; margin: 0 0 10px; display: none">
+                    Contraseña incorrecta
+                </p>
+                <div style="display: flex; gap: 10px; justify-content: center">
+                    <button class="btn btn-primary" onclick="verificarPasswordAdmin()">
+                        <i class="ph-bold ph-sign-in"></i>Entrar
+                    </button>
+                    <button class="btn btn-ghost" onclick="cerrarAdminLogin()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Panel -->
+        <div class="modal-admin" id="modalAdmin">
+            <div class="admin-panel">
+                <div class="admin-header">
+                    <h2><i class="ph-bold ph-sliders-horizontal"></i>Panel de Administración</h2>
+                    <button class="admin-header-close" onclick="cerrarAdmin()"><i class="ph-bold ph-x"></i></button>
+                </div>
+                <div class="admin-body">
+                    <div class="admin-tabs">
+                        <button class="admin-tab activo" onclick="cambiarAdminTab('finanzas', this)">
+                            💰 Finanzas
+                        </button>
+                        <button class="admin-tab" onclick="cambiarAdminTab('plantillas', this)">📱 WhatsApp</button>
+                        <button class="admin-tab" onclick="cambiarAdminTab('procedimientos', this)">
+                            🦷 Procedimientos
+                        </button>
+                        <button class="admin-tab" onclick="cambiarAdminTab('estados', this)">📋 Estados</button>
+                        <button class="admin-tab" onclick="cambiarAdminTab('especialidades', this)">
+                            ⭐ Especialidades
+                        </button>
+                        <button class="admin-tab" onclick="cambiarAdminTab('dentistas', this)">👨‍⚕️ Dentistas</button>
+                        <button class="admin-tab" onclick="cambiarAdminTab('recepcionistas', this)">
+                            👤 Recepcionistas
+                        </button>
+                        <button class="admin-tab" onclick="cambiarAdminTab('firebase', this)">🔥 Firebase</button>
+                        <button class="admin-tab" onclick="cambiarAdminTab('datos', this)">💾 Datos</button>
+                    </div>
+
+                    <div id="adminTab-finanzas">
+                        <div
+                            style="
+                                background: var(--surface2);
+                                padding: 16px;
+                                border-radius: var(--radius);
+                                border: 1px solid var(--border);
+                                margin-bottom: 18px;
+                            ">
+                            <h3
+                                style="
+                                    margin-top: 0;
+                                    font-size: 1rem;
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 8px;
+                                    margin-bottom: 12px;
+                                ">
+                                <i class="ph-bold ph-percent" style="color: var(--primary)"></i>Configuración Fiscal /
+                                IVA
+                            </h3>
+                            <div style="display: flex; gap: 12px; align-items: center; max-width: 260px">
+                                <label style="margin: 0; font-size: 0.875rem; flex-shrink: 0"
+                                    >Porcentaje IVA (%):</label
+                                >
+                                <input
+                                    type="number"
+                                    id="adminIvaPct"
+                                    min="0"
+                                    max="100"
+                                    style="text-align: center; font-weight: 700; width: 80px" />
+                            </div>
+                        </div>
+                        <div
+                            style="
+                                background: var(--surface2);
+                                padding: 16px;
+                                border-radius: var(--radius);
+                                border: 1px solid var(--border);
+                                margin-bottom: 18px;
+                            ">
+                            <h3
+                                style="
+                                    margin-top: 0;
+                                    font-size: 1rem;
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 8px;
+                                    margin-bottom: 12px;
+                                ">
+                                <i class="ph-bold ph-plus-circle" style="color: var(--secondary)"></i>Registrar Ajuste
+                                de Caja / Gasto
+                            </h3>
+                            <div
+                                style="
+                                    display: grid;
+                                    gap: 10px;
+                                    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                                ">
+                                <div>
+                                    <label style="margin-top: 0">Concepto</label
+                                    ><input type="text" id="ajusteConcepto" placeholder="Ej: Papelería..." />
+                                </div>
+                                <div>
+                                    <label style="margin-top: 0">Monto ($)</label
+                                    ><input type="number" id="ajusteMonto" step="0.01" placeholder="-250 (gasto)" />
+                                </div>
+                                <div>
+                                    <label style="margin-top: 0">Método</label>
+                                    <select id="ajusteMetodo">
+                                        <option value="efectivo">Efectivo</option>
+                                        <option value="tarjeta">Tarjeta</option>
+                                        <option value="transferencia">Transferencia</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="margin-top: 0">Fecha</label><input type="date" id="ajusteFecha" />
+                                </div>
+                            </div>
+                            <button
+                                class="btn btn-success btn-full"
+                                onclick="agregarAjusteManual()"
+                                style="margin-top: 12px">
+                                <i class="ph-bold ph-plus"></i>Guardar Ajuste
+                            </button>
+                        </div>
+                        <div id="editorTransaccionDiv">
+                            <h4 style="margin-top: 0; color: #b45309; display: flex; align-items: center; gap: 8px">
+                                <i class="ph-bold ph-pencil-simple"></i>Modificar Transacción
+                            </h4>
+                            <input type="hidden" id="editTransId" />
+                            <div
+                                style="
+                                    display: grid;
+                                    gap: 10px;
+                                    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                                ">
+                                <div>
+                                    <label style="margin-top: 0">Concepto</label
+                                    ><input type="text" id="editTransConcepto" />
+                                </div>
+                                <div>
+                                    <label style="margin-top: 0">Monto ($)</label
+                                    ><input type="number" id="editTransMonto" step="0.01" />
+                                </div>
+                                <div>
+                                    <label style="margin-top: 0">Método</label>
+                                    <select id="editTransMetodo">
+                                        <option value="efectivo">Efectivo</option>
+                                        <option value="tarjeta">Tarjeta</option>
+                                        <option value="transferencia">Transferencia</option>
+                                        <option value="devolucion">Devolución</option>
+                                        <option value="ajuste">Ajuste</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="margin-top: 0">Fecha</label><input type="date" id="editTransFecha" />
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px">
+                                <button class="btn btn-primary btn-sm" onclick="guardarEdicionTransaccion()">
+                                    <i class="ph-bold ph-check"></i>Aplicar
+                                </button>
+                                <button class="btn btn-ghost btn-sm" onclick="cancelarEdicionTransaccion()">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
+                        <h3 style="font-size: 1rem; margin-bottom: 8px; display: flex; align-items: center; gap: 8px">
+                            <i class="ph-bold ph-list"></i>Historial de Movimientos
+                        </h3>
+                        <div
+                            style="
+                                max-height: 260px;
+                                overflow-y: auto;
+                                border: 1px solid var(--border);
+                                border-radius: var(--radius);
+                            ">
+                            <table class="tabla-datos" style="font-size: 0.8rem; margin: 0">
+                                <thead>
+                                    <tr style="position: sticky; top: 0; background: var(--surface2)">
+                                        <th>Fecha</th>
+                                        <th>Concepto</th>
+                                        <th>Monto</th>
+                                        <th>Método</th>
+                                        <th>Acc.</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaFinanzasAdmin"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="adminTab-plantillas" style="display: none">
+                        <p style="font-size: 0.85rem; color: var(--text-2); margin-bottom: 14px">
+                            Personaliza los mensajes de WhatsApp. Haz clic en las variables para insertarlas.
+                        </p>
+                        <div id="adminPlantillasContainer"></div>
+                    </div>
+                    <div id="adminTab-procedimientos" style="display: none">
+                        <p style="font-size: 0.85rem; color: var(--text-2); margin-bottom: 14px">
+                            Edita los tipos de procedimiento dental.
+                        </p>
+                        <div id="adminProcedimientosContainer"></div>
+                        <div class="add-categoria">
+                            <input type="text" id="newProcEmoji" placeholder="🦷" />
+                            <input type="text" id="newProcLabel" placeholder="Nombre del procedimiento..." />
+                            <button class="btn btn-primary btn-sm" onclick="agregarCategoria('procedimientos')">
+                                <i class="ph-bold ph-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="adminTab-estados" style="display: none">
+                        <p style="font-size: 0.85rem; color: var(--text-2); margin-bottom: 14px">
+                            Edita los estados posibles de una cita.
+                        </p>
+                        <div id="adminEstadosContainer"></div>
+                        <div class="add-categoria">
+                            <input type="text" id="newEstadoEmoji" placeholder="🟢" />
+                            <input type="text" id="newEstadoLabel" placeholder="Nombre del estado..." />
+                            <button class="btn btn-primary btn-sm" onclick="agregarCategoria('estados')">
+                                <i class="ph-bold ph-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="adminTab-especialidades" style="display: none">
+                        <p style="font-size: 0.85rem; color: var(--text-2); margin-bottom: 14px">
+                            Edita las especialidades dentales.
+                        </p>
+                        <div id="adminEspecialidadesContainer"></div>
+                        <div class="add-categoria">
+                            <input type="text" id="newEspEmoji" placeholder="⭐" />
+                            <input type="text" id="newEspLabel" placeholder="Nombre de la especialidad..." />
+                            <button class="btn btn-primary btn-sm" onclick="agregarCategoria('especialidades')">
+                                <i class="ph-bold ph-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="adminTab-dentistas" style="display: none">
+                        <p style="font-size: 0.85rem; color: var(--text-2); margin-bottom: 14px">
+                            Gestiona los dentistas del consultorio.
+                        </p>
+                        <div id="adminDentistasFormContainer">
+                            <div class="form-grid-2">
+                                <div>
+                                    <label>Nombre</label
+                                    ><input type="text" id="adminNombreMedico" placeholder="Dr. Nombre Apellido" />
+                                </div>
+                                <div>
+                                    <label>Especialidad</label
+                                    ><select id="adminEspecialidadMedico"></select>
+                                </div>
+                            </div>
+                            <div class="form-grid-2">
+                                <div>
+                                    <label>Teléfono</label
+                                    ><input type="tel" id="adminTelefonoMedico" placeholder="644-123-4567" />
+                                </div>
+                                <div>
+                                    <label>Cédula Profesional</label
+                                    ><input type="text" id="adminCedulaMedico" placeholder="Número de cédula" />
+                                </div>
+                            </div>
+                            <div style="text-align: right; margin-top: 10px">
+                                <button class="btn btn-primary btn-sm" onclick="agregarDentistaDesdeAdmin()">
+                                    <i class="ph-bold ph-plus-circle"></i>Agregar Dentista
+                                </button>
+                            </div>
+                        </div>
+                        <div id="adminListaDentistas" class="lista-gestion" style="margin-top: 14px"></div>
+                    </div>
+                    <div id="adminTab-recepcionistas" style="display: none">
+                        <p style="font-size: 0.85rem; color: var(--text-2); margin-bottom: 14px">
+                            Gestiona los recepcionistas y sus contraseñas.
+                        </p>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px">
+                            <input
+                                type="text"
+                                id="newRecepNombre"
+                                placeholder="Nombre del recepcionista..."
+                                style="flex: 2; min-width: 140px" />
+                            <input
+                                type="password"
+                                id="newRecepPassword"
+                                placeholder="Contraseña (opcional)"
+                                style="flex: 2; min-width: 140px" />
+                            <button class="btn btn-primary btn-sm" onclick="agregarRecepcionistaAdmin()">
+                                <i class="ph-bold ph-plus"></i>Agregar
+                            </button>
+                        </div>
+                        <div id="adminRecepcionistasContainer"></div>
+                    </div>
+                    <div id="adminTab-firebase" style="display: none">
+                        <p style="font-size: 0.85rem; color: var(--text-2); margin-bottom: 14px">
+                            Conecta o cambia la base de datos Firebase.
+                        </p>
+                        <div class="tabs-nav" style="margin-bottom: 14px">
+                            <button
+                                class="tab-btn activo"
+                                id="fbTabPegar"
+                                onclick="cambiarFirebaseTab('pegar',this)"
+                                style="flex: 1">
+                                📋 Pegar config
+                            </button>
+                            <button
+                                class="tab-btn"
+                                id="fbTabArchivo"
+                                onclick="cambiarFirebaseTab('archivo',this)"
+                                style="flex: 1">
+                                📂 Cargar .txt
+                            </button>
+                        </div>
+                        <div id="fbPanelPegar">
+                            <label>Pega el objeto firebaseConfig:</label>
+                            <textarea
+                                id="adminFirebaseInput"
+                                rows="9"
+                                style="font-family: monospace; font-size: 0.8rem"
+                                placeholder='{"apiKey":"AIza...", ...}'></textarea>
+                        </div>
+                        <div id="fbPanelArchivo" style="display: none">
+                            <label>Selecciona un archivo .txt o .json:</label>
+                            <div
+                                style="
+                                    border: 2px dashed var(--border);
+                                    border-radius: var(--radius);
+                                    padding: 24px;
+                                    text-align: center;
+                                    cursor: pointer;
+                                "
+                                onclick="document.getElementById('fbArchivoInput').click()">
+                                <i
+                                    class="ph-bold ph-file-text"
+                                    style="
+                                        font-size: 2rem;
+                                        color: var(--text-3);
+                                        display: block;
+                                        margin: 0 auto 8px;
+                                    "></i>
+                                <p style="margin: 0; color: var(--text-2); font-size: 0.875rem">
+                                    Haz clic para seleccionar archivo
+                                </p>
+                                <p
+                                    id="fbArchivoNombre"
+                                    style="
+                                        margin: 6px 0 0;
+                                        font-size: 0.82rem;
+                                        font-weight: 600;
+                                        color: var(--primary);
+                                    "></p>
+                            </div>
+                            <input
+                                type="file"
+                                id="fbArchivoInput"
+                                accept=".txt,.json"
+                                style="display: none"
+                                onchange="cargarArchivoFirebase(event)" />
+                            <textarea
+                                id="adminFirebaseInputArchivo"
+                                rows="6"
+                                style="font-family: monospace; font-size: 0.8rem; margin-top: 10px"
+                                readonly></textarea>
+                        </div>
+                        <div style="margin-top: 14px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap">
+                            <button class="btn btn-primary" onclick="guardarFirebaseDesdeAdmin()">
+                                <i class="ph-bold ph-plugs-connected"></i>Guardar y reconectar
+                            </button>
+                            <button class="btn btn-danger" onclick="resetearFirebase()">
+                                <i class="ph-bold ph-trash"></i>Borrar config
+                            </button>
+                        </div>
+                        <div
+                            id="fbEstadoActual"
+                            style="
+                                margin-top: 12px;
+                                font-size: 0.82rem;
+                                padding: 10px;
+                                background: var(--surface2);
+                                border-radius: var(--radius-sm);
+                                color: var(--text-2);
+                                border: 1px solid var(--border);
+                            "></div>
+                    </div>
+                </div>
+                <div id="adminTab-datos" style="display:none;">
+                    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px;">
+                        <h3 style="margin:0 0 8px;font-size:0.95rem;display:flex;align-items:center;gap:8px;"><i class="ph-bold ph-download-simple" style="color:var(--primary)"></i>Exportar Base de Datos</h3>
+                        <p style="font-size:0.82rem;color:var(--text-2);margin-bottom:12px;">Descarga un respaldo completo de pacientes, citas, pagos y médicos en formato JSON.</p>
+                        <button class="btn btn-primary btn-full" onclick="exportarBaseDatosJSON()"><i class="ph-bold ph-download-simple"></i>Descargar Respaldo JSON</button>
+                    </div>
+                    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px;">
+                        <h3 style="margin:0 0 8px;font-size:0.95rem;display:flex;align-items:center;gap:8px;"><i class="ph-bold ph-upload-simple" style="color:var(--secondary)"></i>Importar Base de Datos</h3>
+                        <p style="font-size:0.82rem;color:var(--text-2);margin-bottom:12px;">Sube un archivo JSON exportado anteriormente. Los datos existentes serán <strong>reemplazados</strong>.</p>
+                        <div style="border:2px dashed var(--border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:border-color 0.15s;" onclick="document.getElementById('importarJsonInput').click()">
+                            <i class="ph-bold ph-file-arrow-up" style="font-size:2rem;color:var(--text-3);display:block;margin:0 auto 8px;"></i>
+                            <p style="margin:0;color:var(--text-2);font-size:0.875rem;">Clic para seleccionar archivo .json</p>
+                            <p id="importarJsonNombre" style="margin:6px 0 0;font-size:0.82rem;font-weight:600;color:var(--primary);"></p>
+                        </div>
+                        <input type="file" id="importarJsonInput" accept=".json" style="display:none;" onchange="previewImportarJSON(this.files[0])"/>
+                        <div id="importarJsonPreview" style="display:none;margin-top:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;font-size:0.82rem;color:var(--text-2);"></div>
+                        <button id="importarJsonBtn" class="btn btn-success btn-full" onclick="confirmarImportarJSON()" style="display:none;margin-top:10px;"><i class="ph-bold ph-check-circle"></i>Confirmar Importación</button>
+                    </div>
+                    <div style="background:#fef2f2;border:1.5px solid #fca5a5;border-radius:var(--radius);padding:16px;">
+                        <h3 style="margin:0 0 8px;font-size:0.95rem;display:flex;align-items:center;gap:8px;color:var(--danger);"><i class="ph-bold ph-trash"></i>Zona de Peligro</h3>
+                        <p style="font-size:0.82rem;color:#dc2626;margin-bottom:12px;">Borra <strong>permanentemente</strong> todos los datos de Firestore. Esta acción no se puede deshacer.</p>
+                        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                            <input type="text" id="confirmBorrarInput" placeholder='Escribe "BORRAR TODO" para confirmar' style="flex:1;min-width:200px;border-color:#fca5a5;"/>
+                            <button class="btn btn-danger" onclick="borrarTodaLaBaseDeDatos()"><i class="ph-bold ph-trash"></i>Borrar Todo</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="admin-save-bar">
+                    <button class="btn btn-ghost" onclick="cerrarAdmin()"><i class="ph-bold ph-x"></i>Cerrar</button>
+                    <button class="btn btn-success" onclick="guardarCambiosAdmin()">
+                        <i class="ph-bold ph-floppy-disk"></i>Guardar Todo
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Logo Splash Overlay -->
+        <div class="logo-splash-overlay" id="logoSplashOverlay" onclick="cerrarLogoSplash()">
+            <img class="logo-splash-img" src="https://static.wixstatic.com/media/026710_50959c5ad2e64afebc82443b2991fd81~mv2.jpg" alt="Ortho Smile SJR">
+            <div class="logo-splash-nombre" id="logoSplashNombre">Ortho Smile SJR</div>
+            <div class="logo-splash-powered">Powered by <strong>Axotek</strong></div>
+        </div>        
+        <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+            import {
+                getAuth,
+                signInAnonymously,
+                signInWithCustomToken,
+                onAuthStateChanged
+            } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+            import {
+                getFirestore,
+                doc,
+                collection,
+                onSnapshot,
+                setDoc,
+                deleteDoc
+            } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+            let firebaseConfig;
+            const appId = typeof __app_id !== "undefined" ? __app_id : "consultorio-medico-app";
+            const initialAuthToken = typeof __initial_auth_token !== "undefined" ? __initial_auth_token : null;
+
+            let app, auth, db, dataDocRef, unsubscribe;
+            console.log('APP_ID:', appId);
+            console.log('RUTA CITAS:', `artifacts/${appId.replace(/\//g,'_')}/public/data/consultorio/citas/test`);
+
+            // Función auxiliar robusta para obtener la fecha local en formato YYYY-MM-DD sin desfase horario (UTC)
+            function getFechaLocal() {
+                const d = new Date();
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, "0");
+                const day = String(d.getDate()).padStart(2, "0");
+                return `${y}-${m}-${day}`;
+            }
+
+            let datos = {
+                pacientes: [],
+                medicos: [],
+                citas: [],
+                pagos: [],
+                config: { nombre: "Ortho Smile SJR", direccion: "", telefono: "", tarifa: 500, iva: 16 },
+                admin: {
+                    plantillas: {
+                        recordatorio: `Hola {{nombre}} 😊\n\nTe recordamos que tienes una cita en *{{consultorio}}* el día *{{fecha}}{{hora}}*.\n\n📋 Procedimiento: *{{procedimiento}}*\n\nPor favor confirma tu asistencia o avísanos si necesitas reprogramar.{{telConsultorio}}\n\n¡Te esperamos! 🦷`,
+                        confirmacion: `Hola {{nombre}} ✅\n\n¡Tu cita en *{{consultorio}}* ha sido *confirmada*!\n\n📅 Fecha: *{{fecha}}{{hora}}*\n📋 Procedimiento: *{{procedimiento}}*\n\n¡Nos vemos pronto! 😊`,
+                        cancelacion: `Hola {{nombre}},\n\nTe informamos que tu cita del *{{fecha}}* en *{{consultorio}}* ha sido *cancelada*.\n\nPuedes reprogramarla cuando gustes.{{telConsultorio}}\n\n¡Hasta pronto! 🦷`
+                    },
+                    procedimientos: [
+                        { value: "consulta_diagnostico", emoji: "🦷", label: "Consulta / Diagnóstico" },
+                        { value: "limpieza_profilaxis", emoji: "🧹", label: "Limpieza / Profilaxis" },
+                        { value: "restauracion_caries", emoji: "🔧", label: "Restauración / Caries" },
+                        { value: "extraccion", emoji: "⚙️", label: "Extracción Dental" },
+                        { value: "endodoncia", emoji: "🔩", label: "Endodoncia (Canal)" },
+                        { value: "ortodoncia_brackets", emoji: "📐", label: "Ortodoncia / Brackets" },
+                        { value: "ortodoncia_retenedor", emoji: "📎", label: "Retenedor / Alineadores" },
+                        { value: "cirugia_oral", emoji: "🩺", label: "Cirugía Oral" },
+                        { value: "implante", emoji: "🦿", label: "Implante Dental" },
+                        { value: "corona_protesis", emoji: "👑", label: "Corona / Prótesis" },
+                        { value: "blanqueamiento", emoji: "✨", label: "Blanqueamiento Dental" },
+                        { value: "rayos_x", emoji: "🔬", label: "Radiografías / Rayos X" },
+                        { value: "periodoncia", emoji: "🌿", label: "Periodoncia (Encías)" },
+                        { value: "pedodoncia", emoji: "🧒", label: "Odontopediatría" },
+                        { value: "primera_vez", emoji: "🆕", label: "Primera Vez" },
+                        { value: "seguimiento", emoji: "🔁", label: "Seguimiento / Control" },
+                        { value: "urgencia_dental", emoji: "🚨", label: "Urgencia Dental" },
+                        { value: "otro", emoji: "📌", label: "Otro" }
+                    ],
+                    estados: [
+                        { value: "pendiente", emoji: "🟡", label: "Pendiente" },
+                        { value: "confirmada", emoji: "🔵", label: "Confirmada" },
+                        { value: "completada", emoji: "🟢", label: "Completada" },
+                        { value: "cancelada", emoji: "🔴", label: "Cancelada" }
+                    ],
+                    especialidades: [
+                        { value: "odontologia_general", emoji: "🦷", label: "Odontología General" },
+                        { value: "ortodoncia", emoji: "📐", label: "Ortodoncia" },
+                        { value: "endodoncia", emoji: "🔩", label: "Endodoncia" },
+                        { value: "cirugia_oral", emoji: "🩺", label: "Cirugía Oral y Maxilofacial" },
+                        { value: "periodoncia", emoji: "🌿", label: "Periodoncia" },
+                        { value: "implantologia", emoji: "🦿", label: "Implantología" },
+                        { value: "odontopediatria", emoji: "🧒", label: "Odontopediatría" },
+                        { value: "protesis", emoji: "👑", label: "Prótesis Dental" },
+                        { value: "estetica_dental", emoji: "✨", label: "Estética Dental" },
+                        { value: "radiologia", emoji: "🔬", label: "Radiología Dental" }
+                    ],
+                    recepcionistas: []
+                }
+            };
+
+            let itemAEliminar = null,
+                citaEditando = null,
+                calendarInstance = null,
+                tabRegistroActual = "citas";
+            const authContainer = document.getElementById("auth-container");
+            const appContainer = document.getElementById("app-container");
+
+            document.addEventListener("DOMContentLoaded", () => {
+                if (localStorage.getItem("darkMode") === "true") {
+                    document.body.classList.add("dark-mode");
+                    document.getElementById("iconSun").style.display = "none";
+                    document.getElementById("iconMoon").style.display = "block";
+                }
+                const selRecordatorio = document.getElementById("recordatorioCita");
+                if (selRecordatorio) {
+                    selRecordatorio.addEventListener("change", function () {
+                        document.getElementById("seccionWhatsapp").style.display =
+                            this.value !== "ninguno" ? "block" : "none";
+                    });
+                }
+                startApp();
+            });
+
+            function startApp() {
+                if (typeof __firebase_config !== "undefined" && __firebase_config) {
+                    firebaseConfig = JSON.parse(__firebase_config);
+                    initializeFirebase();
+                    return;
+                }
+                const savedConfig = localStorage.getItem("consultorio_firebase_config");
+                if (savedConfig) {
+                    try {
+                        firebaseConfig = JSON.parse(savedConfig);
+                        initializeFirebase();
+                    } catch (e) {
+                        localStorage.removeItem("consultorio_firebase_config");
+                        showConfigModal();
+                    }
+                } else {
+                    showConfigModal();
+                }
+            }
+
+            function showConfigModal() {
+                authContainer.style.display = "none";
+                document.getElementById("modalFondo").style.display = "block";
+                document.getElementById("configModal").style.display = "block";
+            }
+
+            window.toggleConfigTab = function (modo) {
+                document.getElementById("cfgPanelPegar").style.display = modo === "pegar" ? "block" : "none";
+                document.getElementById("cfgPanelArchivo").style.display = modo === "archivo" ? "block" : "none";
+                document.getElementById("cfgTabPegar").classList.toggle("activo", modo === "pegar");
+                document.getElementById("cfgTabArchivo").classList.toggle("activo", modo === "archivo");
+                document.getElementById("cfgError").style.display = "none";
+            };
+
+            window.cargarArchivoCfgInicial = function (file) {
+                if (!file) return;
+                document.getElementById("cfgArchivoNombre").textContent = "📄 " + file.name;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById("cfgArchivoContenido").value = e.target.result;
+                };
+                reader.readAsText(file);
+            };
+
+            function mostrarErrorCfg(msg) {
+                const el = document.getElementById("cfgError");
+                if (el) {
+                    el.textContent = msg;
+                    el.style.display = "block";
+                }
+            }
+
+            window.saveConfigAndInitialize = function () {
+                const archivoVisible = document.getElementById("cfgPanelArchivo").style.display !== "none";
+                const rawVal = archivoVisible
+                    ? document.getElementById("cfgArchivoContenido").value
+                    : document.getElementById("firebaseConfigInput").value;
+                if (!rawVal.trim()) return mostrarErrorCfg("El campo no puede estar vacío.");
+                try {
+                    const match = rawVal.match(/\{[\s\S]*\}/);
+                    if (!match) throw new Error("No se encontró un objeto JSON válido.");
+                    const parsed = JSON.parse(match[0]);
+                    if (!parsed.apiKey) throw new Error("Falta el campo apiKey.");
+                    localStorage.setItem("consultorio_firebase_config", JSON.stringify(parsed));
+                    document.getElementById("configModal").style.display = "none";
+                    document.getElementById("modalFondo").style.display = "none";
+                    authContainer.style.display = "block";
+                    startApp();
+                } catch (err) {
+                    mostrarErrorCfg(`Config inválida: ${err.message}`);
+                }
+            };
+
+            window.resetearFirebase = function () {
+                localStorage.removeItem("consultorio_firebase_config");
+                window.location.reload();
+            };
+
+            async function initializeFirebase() {
+                if (!firebaseConfig || !firebaseConfig.apiKey) {
+                    authContainer.innerHTML =
+                        "<h2>Error de Configuración</h2><p>La configuración de Firebase no es válida.</p>";
+                    return;
+                }
+                try {
+                    app = initializeApp(firebaseConfig);
+                    auth = getAuth(app);
+                    db = getFirestore(app);
+                    onAuthStateChanged(auth, (user) => {
+                        if (user) {
+                            authContainer.style.display = "none";
+                            appContainer.style.display = "block";
+                            setupRealtimeListener();
+                        } else {
+                            signIn();
+                        }
+                    });
+                } catch (err) {
+                    authContainer.innerHTML = `<h2>Error</h2><p>${err.message}</p>`;
+                }
+            }
+
+            async function signIn() {
+                try {
+                    if (initialAuthToken && typeof __firebase_config !== "undefined") {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (err) {
+                    authContainer.innerHTML = `<h2>Error de Autenticación</h2><p>${err.message}</p>`;
+                }
+            }
+
+            function setupRealtimeListener() {
+                if (unsubscribe) unsubscribe();
+
+                const basePath = `consultorio_data`;
+
+                // Referencias a cada colección
+                const configRef     = doc(db, 'axocitas', 'config');
+                const adminRef      = doc(db, 'axocitas', 'admin');
+                const pacientesRef  = collection(db, 'axocitas_pacientes');
+                const medicosRef    = collection(db, 'axocitas_medicos');
+                const citasRef      = collection(db, 'axocitas_citas');
+                const pagosRef      = collection(db, 'axocitas_pagos');
+
+                let cargado = { config: false, admin: false, pacientes: false, medicos: false, citas: false, pagos: false };
+                let unsubs = [];
+
+                function marcarCargado(key) {
+                    cargado[key] = true;
+                    const ts = `Sincronizado: ${new Date().toLocaleTimeString('es-MX')}`;
+                    const syncEl = document.getElementById('ultimaGuardadoNube');
+                    if (syncEl) syncEl.textContent = ts;
+                    if (Object.values(cargado).every(Boolean)) {
+                        actualizarTodo();
+                    }
+                }
+
+                // Config
+                unsubs.push(onSnapshot(configRef, snap => {
+                    if (snap.exists()) {
+                        datos.config = snap.data();
+                        if (datos.config.iva === undefined) datos.config.iva = 16;
+                    } else {
+                        datos.config = { nombre: 'Ortho Smile SJR', direccion: '', telefono: '', tarifa: 500, iva: 16 };
+                        setDoc(configRef, datos.config);
+                    }
+                    marcarCargado('config');
+                }));
+
+                // Admin
+                unsubs.push(onSnapshot(adminRef, snap => {
+                    if (snap.exists()) {
+                        datos.admin = { ...datos.admin, ...snap.data() };
+                    } else {
+                        setDoc(adminRef, datos.admin);
+                    }
+                    marcarCargado('admin');
+                }));
+
+                // Pacientes
+                unsubs.push(onSnapshot(pacientesRef, snap => {
+                    datos.pacientes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    marcarCargado('pacientes');
+                }));
+
+                // Médicos
+                unsubs.push(onSnapshot(medicosRef, snap => {
+                    datos.medicos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    marcarCargado('medicos');
+                }));
+
+                // Citas
+                unsubs.push(onSnapshot(citasRef, snap => {
+                    datos.citas = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    marcarCargado('citas');
+                    if (Object.values(cargado).every(Boolean)) actualizarTodo();
+                }));
+
+                // Pagos
+                unsubs.push(onSnapshot(pagosRef, snap => {
+                    datos.pagos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    marcarCargado('pagos');
+                    if (Object.values(cargado).every(Boolean)) actualizarTodo();
+                }));
+                unsubscribe = () => unsubs.forEach(u => u());
+            }
+
+            async function saveConfig() {
+                try { await setDoc(doc(db, 'axocitas', 'config'), datos.config); }
+                catch(err) { mostrarAlerta(`Error al guardar config: ${err.message}`, 'error'); }
+            }
+            async function saveAdmin() {
+                try { await setDoc(doc(db, 'axocitas', 'admin'), datos.admin); }
+                catch(err) { mostrarAlerta(`Error al guardar admin: ${err.message}`, 'error'); }
+            }
+            async function savePaciente(paciente) {
+                try { await setDoc(doc(db, 'axocitas_pacientes', paciente.id), paciente); }
+                catch(err) { mostrarAlerta(`Error al guardar paciente: ${err.message}`, 'error'); }
+            }
+            async function deletePaciente(id) {
+                try { await deleteDoc(doc(db, 'axocitas_pacientes', id)); }
+                catch(err) { mostrarAlerta(`Error al eliminar paciente: ${err.message}`, 'error'); }
+            }
+            async function saveMedico(medico) {
+                try { await setDoc(doc(db, 'axocitas_medicos', medico.id), medico); }
+                catch(err) { mostrarAlerta(`Error al guardar médico: ${err.message}`, 'error'); }
+            }
+            async function deleteMedico(id) {
+                try { await deleteDoc(doc(db, 'axocitas_medicos', id)); }
+                catch(err) { mostrarAlerta(`Error al eliminar médico: ${err.message}`, 'error'); }
+            }
+            async function saveCita(cita) {
+                try { await setDoc(doc(db, 'axocitas_citas', cita.id), cita); }
+                catch(err) { mostrarAlerta(`Error al guardar cita: ${err.message}`, 'error'); }
+            }
+            async function deleteCita(id) {
+                try { await deleteDoc(doc(db, 'axocitas_citas', id)); }
+                catch(err) { mostrarAlerta(`Error al eliminar cita: ${err.message}`, 'error'); }
+            }
+            async function savePago(pago) {
+                try { await setDoc(doc(db, 'axocitas_pagos', pago.id), pago); }
+                catch(err) { mostrarAlerta(`Error al guardar pago: ${err.message}`, 'error'); }
+            }
+            async function deletePago(id) {
+                try { await deleteDoc(doc(db, 'axocitas_pagos', id)); }
+                catch(err) { mostrarAlerta(`Error al eliminar pago: ${err.message}`, 'error'); }
+            }
+            async function saveData() {
+                await saveConfig();
+                await saveAdmin();
+            }
+            // ── CALENDAR ──
+            function claseEventoDental(cita) {
+                if (!cita) return "fc-event-estado-pendiente";
+                if (cita.estado === "cancelada") return "fc-event-estado-cancelada";
+                const pagoReal = datos.pagos.find((p) => p.citaId === cita.id && p.monto > 0);
+                if (pagoReal) return "fc-event-estado-pagada";
+                if (cita.estado === "completada") return "fc-event-estado-pagada";
+                if (cita.estado === "confirmada") return "fc-event-estado-confirmada";
+                return "fc-event-estado-pendiente";
+            }
+
+            function inicializarCalendario() {
+                const el = document.getElementById("calendar");
+                if (!el || typeof FullCalendar === "undefined") return;
+                const events = datos.citas
+                    .map((cita) => {
+                        if (!cita) return null;
+                        const paciente = datos.pacientes.find((p) => p.id === cita.pacienteId);
+                        const className = claseEventoDental(cita);
+                        const hora = cita.hora ? ` ${cita.hora}` : "";
+                        const nombrePac = paciente ? paciente.nombre : "Paciente";
+                        const fechaCita = cita.fecha || getFechaLocal();
+                        return {
+                            title: `${hora} ${nombrePac}`,
+                            start: cita.hora ? `${fechaCita}T${cita.hora}` : fechaCita,
+                            className,
+                            extendedProps: { id: cita.id }
+                        };
+                    })
+                    .filter((e) => e !== null);
+                try {
+                    if (calendarInstance) calendarInstance.destroy();
+                    calendarInstance = new FullCalendar.Calendar(el, {
+                        height: "auto",
+                        initialView: "dayGridMonth",
+                        locale: "es",
+                        headerToolbar: {
+                            left: "prev,next today",
+                            center: "title",
+                            right: "dayGridMonth,timeGridWeek,listWeek"
+                        },
+                        eventClick(info) {
+                            verDetallesCita(info.event.extendedProps.id);
+                        },
+                        eventContent(arg) {
+                            const wrap = document.createElement("div");
+                            wrap.style.cssText = "display:flex;align-items:center;width:100%;gap:2px;";
+                            const title = document.createElement("span");
+                            title.textContent = arg.event.title;
+                            title.style.cssText =
+                                "overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;font-size:0.75rem;";
+                            const btn = document.createElement("button");
+                            btn.className = "event-complete-btn";
+                            btn.title = "Marcar completada";
+                            btn.innerHTML = '<i class="ph-bold ph-check" style="font-size:10px;"></i>';
+                            btn.onclick = (e) => {
+                                e.stopPropagation();
+                                marcarCitaCompletada(arg.event.extendedProps.id);
+                            };
+                            wrap.appendChild(title);
+                            wrap.appendChild(btn);
+                            return { domNodes: [wrap] };
+                        },
+                        dateClick(info) {
+                            document.getElementById("fechaCita").value = info.dateStr;
+                            citaEditando = null;
+                            abrirModal("nuevaCita");
+                        },
+                        events
+                    });
+                    calendarInstance.render();
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+
+            const COMPATIBILIDAD = {
+                ortodoncia_brackets: ["ortodoncia"],
+                ortodoncia_retenedor: ["ortodoncia"],
+                endodoncia: ["endodoncia", "odontologia_general"],
+                cirugia_oral: ["cirugia_oral"],
+                implante: ["implantologia", "cirugia_oral"],
+                corona_protesis: ["protesis", "odontologia_general"],
+                periodoncia: ["periodoncia", "odontologia_general"],
+                pedodoncia: ["odontopediatria"],
+                blanqueamiento: ["estetica_dental", "odontologia_general"],
+                rayos_x: ["radiologia", "odontologia_general"]
+            };
+            const NOMBRES_ESPECIALIDAD = {
+                odontologia_general: "Odontología General",
+                ortodoncia: "Ortodoncia",
+                endodoncia: "Endodoncia",
+                cirugia_oral: "Cirugía Oral",
+                periodoncia: "Periodoncia",
+                implantologia: "Implantología",
+                odontopediatria: "Odontopediatría",
+                protesis: "Prótesis Dental",
+                estetica_dental: "Estética Dental",
+                radiologia: "Radiología Dental",
+                otra: "Otra especialidad"
+            };
+            const NOMBRES_PROCEDIMIENTO = {
+                ortodoncia_brackets: "Ortodoncia / Brackets",
+                ortodoncia_retenedor: "Retenedor / Alineadores",
+                endodoncia: "Endodoncia",
+                cirugia_oral: "Cirugía Oral",
+                implante: "Implante Dental",
+                corona_protesis: "Corona / Prótesis",
+                periodoncia: "Periodoncia",
+                pedodoncia: "Odontopediatría",
+                blanqueamiento: "Blanqueamiento",
+                rayos_x: "Radiografías"
+            };
+
+            window.validarEspecialidadVsProcedimiento = function () {
+                const medicoId = document.getElementById("medicoCita").value;
+                const tipo = document.getElementById("tipoCita").value;
+                const alerta = document.getElementById("alertaEspecialidad");
+                const alertaTexto = document.getElementById("alertaEspecialidadTexto");
+                const requeridas = COMPATIBILIDAD[tipo];
+                if (!requeridas || !medicoId) {
+                    alerta.style.display = "none";
+                    return;
+                }
+                const medico = datos.medicos.find((m) => m.id === medicoId);
+                if (!medico) {
+                    alerta.style.display = "none";
+                    return;
+                }
+                if (!requeridas.includes(medico.especialidad)) {
+                    const espNombre = NOMBRES_ESPECIALIDAD[medico.especialidad] || medico.especialidad;
+                    const procNombre = NOMBRES_PROCEDIMIENTO[tipo] || tipo;
+                    const requeridaNombre = requeridas.map((r) => NOMBRES_ESPECIALIDAD[r] || r).join(" o ");
+                    alertaTexto.textContent = `⚠️ El Dr./Dra. ${medico.nombre} tiene especialidad en ${espNombre}, pero "${procNombre}" normalmente requiere ${requeridaNombre}. Verifica antes de guardar.`;
+                    alerta.style.display = "block";
+                } else {
+                    alerta.style.display = "none";
+                }
+            };
+
+            window.marcarCitaCompletada = function (id) {
+                const cita = datos.citas.find((c) => c.id === id);
+                if (!cita) return;
+                cita.estado = cita.estado === "completada" ? "pendiente" : "completada";
+                saveCita(cita);
+            };
+
+            // ── PATIENT SEARCH ──
+            window.filtrarBuscadorPaciente = function (q) {
+                const dd = document.getElementById("buscadorDropdown");
+                const query = q.trim().toLowerCase();
+                const resultados =
+                    query.length === 0
+                        ? datos.pacientes.slice(0, 12)
+                        : datos.pacientes
+                              .filter((p) => p && p.nombre && p.nombre.toLowerCase().includes(query))
+                              .slice(0, 10);
+                if (resultados.length === 0) {
+                    dd.innerHTML = `<div class="buscador-item"><span class="pac-nombre" style="color:var(--text-3);">Sin resultados</span></div>`;
+                } else {
+                    dd.innerHTML = resultados
+                        .map((p) => {
+                            const edad = p.nacimiento ? calcularEdad(p.nacimiento) + " años · " : "";
+                            const tel = p.telefono || "";
+                            return `<div class="buscador-item" onclick="seleccionarPaciente('${p.id}','${p.nombre.replace(/'/g, "\\'")}')"><div class="pac-nombre">${p.nombre}</div><div class="pac-detalle">${edad}${tel}</div></div>`;
+                        })
+                        .join("");
+                }
+                dd.style.display = "block";
+            };
+
+            window.seleccionarPaciente = function (id, nombre) {
+                document.getElementById("pacienteCita").value = id;
+                document.getElementById("buscadorPacienteInput").value = "";
+                document.getElementById("buscadorDropdown").style.display = "none";
+                const sel = document.getElementById("buscadorSeleccionado");
+                document.getElementById("buscadorSeleccionadoNombre").innerHTML =
+                    `<i class="ph-bold ph-user" style="margin-right:6px;"></i><strong>${nombre}</strong>`;
+                sel.classList.add("visible");
+                validarEspecialidadVsProcedimiento();
+            };
+
+            window.limpiarPacienteSeleccionado = function () {
+                document.getElementById("pacienteCita").value = "";
+                document.getElementById("buscadorPacienteInput").value = "";
+                document.getElementById("buscadorSeleccionado").classList.remove("visible");
+                document.getElementById("buscadorDropdown").style.display = "none";
+            };
+
+            document.addEventListener("click", function (e) {
+                if (!e.target.closest(".buscador-paciente-wrap")) {
+                    const dd = document.getElementById("buscadorDropdown");
+                    if (dd) dd.style.display = "none";
+                    const dd2 = document.getElementById("buscadorNuevoIngresoDropdown");
+                    if (dd2) dd2.style.display = "none";
+                }
+            });
+
+            // ── WHATSAPP ──
+            function construirMensajeWhatsapp(citaId, tipoPlantilla) {
+                const cita = datos.citas.find((c) => c.id === citaId);
+                if (!cita) return null;
+                const paciente = datos.pacientes.find((p) => p.id === cita.pacienteId);
+                if (!paciente || !paciente.telefono) return null;
+                const plantillaRaw =
+                    datos.admin?.plantillas?.[tipoPlantilla] || datos.admin?.plantillas?.recordatorio || "";
+                const consultorio = datos.config?.nombre || "el consultorio";
+                const telConsultorio = datos.config?.telefono ? `\n📞 ${datos.config.telefono}` : "";
+                let fechaFormateada = cita.fecha || "";
+                if (cita.fecha) {
+                    const d = new Date(cita.fecha + "T12:00:00");
+                    if (!isNaN(d))
+                        fechaFormateada = d.toLocaleDateString("es-MX", {
+                            weekday: "long",
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric"
+                        });
+                }
+                const horaFormateada = cita.hora ? ` a las ${cita.hora} hrs` : "";
+                const procLabel = labelProcedimiento(cita.tipo);
+                const msg = plantillaRaw
+                    .replace(/\{\{nombre\}\}/g, paciente.nombre ? paciente.nombre.split(" ")[0] : "")
+                    .replace(/\{\{nombreCompleto\}\}/g, paciente.nombre || "")
+                    .replace(/\{\{consultorio\}\}/g, consultorio)
+                    .replace(/\{\{fecha\}\}/g, fechaFormateada)
+                    .replace(/\{\{hora\}\}/g, horaFormateada)
+                    .replace(/\{\{procedimiento\}\}/g, procLabel)
+                    .replace(/\{\{telConsultorio\}\}/g, telConsultorio)
+                    .replace(/\{\{telefono\}\}/g, paciente.telefono || "");
+                let tel = (paciente.telefono || "").replace(/[\s\-\(\)\+]/g, "");
+                if (tel.length === 10) tel = "52" + tel;
+                else if (tel.startsWith("1") && tel.length === 11) tel = "52" + tel.slice(1);
+                return { msg, tel };
+            }
+
+            window.enviarWhatsappDesdeCita = function (tipoPlantilla) {
+                const id = document.getElementById("verCitaId").value;
+                const res = construirMensajeWhatsapp(id, tipoPlantilla || "recordatorio");
+                if (!res) {
+                    mostrarAlerta("El paciente no tiene teléfono registrado.", "error");
+                    return;
+                }
+                window.open(`https://wa.me/${res.tel}?text=${encodeURIComponent(res.msg)}`, "_blank");
+            };
+
+            window.enviarWhatsappRecordatorio = function () {
+                const pacienteId = document.getElementById("pacienteCita").value;
+                if (!pacienteId) return mostrarAlerta("Selecciona un paciente primero.", "error");
+                const fecha = document.getElementById("fechaCita").value;
+                if (!fecha) return mostrarAlerta("Selecciona una fecha para la cita.", "error");
+                const paciente = datos.pacientes.find((p) => p.id === pacienteId);
+                if (!paciente?.telefono) return mostrarAlerta("El paciente no tiene teléfono registrado.", "error");
+                const plantillaRaw = datos.admin?.plantillas?.recordatorio || "";
+                const consultorio = datos.config?.nombre || "el consultorio";
+                const telConsultorio = datos.config?.telefono ? `\n📞 ${datos.config.telefono}` : "";
+                let fechaFormateada = fecha;
+                if (fecha) {
+                    const d = new Date(fecha + "T12:00:00");
+                    if (!isNaN(d))
+                        fechaFormateada = d.toLocaleDateString("es-MX", {
+                            weekday: "long",
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric"
+                        });
+                }
+                const hora = document.getElementById("horaCita").value;
+                const horaFormateada = hora ? ` a las ${hora} hrs` : "";
+                const tipoVal = document.getElementById("tipoCita").value;
+                const procLabel = labelProcedimiento(tipoVal);
+                const msg = plantillaRaw
+                    .replace(/\{\{nombre\}\}/g, paciente.nombre ? paciente.nombre.split(" ")[0] : "")
+                    .replace(/\{\{nombreCompleto\}\}/g, paciente.nombre || "")
+                    .replace(/\{\{consultorio\}\}/g, consultorio)
+                    .replace(/\{\{fecha\}\}/g, fechaFormateada)
+                    .replace(/\{\{hora\}\}/g, horaFormateada)
+                    .replace(/\{\{procedimiento\}\}/g, procLabel)
+                    .replace(/\{\{telConsultorio\}\}/g, telConsultorio)
+                    .replace(/\{\{telefono\}\}/g, paciente.telefono || "");
+                let tel = (paciente.telefono || "").replace(/[\s\-\(\)\+]/g, "");
+                if (tel.length === 10) tel = "52" + tel;
+                else if (tel.startsWith("1") && tel.length === 11) tel = "52" + tel.slice(1);
+                window.open(`https://wa.me/${tel}?text=${encodeURIComponent(msg)}`, "_blank");
+            };
+
+            // ── ADMIN ──
+            const ADMIN_PASSWORD = "Axo2572#";
+            let adminTabActual = "finanzas";
+
+            window.abrirAdminLogin = function () {
+                document.getElementById("adminPasswordInput").value = "";
+                document.getElementById("adminPasswordError").style.display = "none";
+                document.getElementById("adminLoginOverlay").classList.add("visible");
+                setTimeout(() => document.getElementById("adminPasswordInput").focus(), 100);
+            };
+            window.cerrarAdminLogin = function () {
+                document.getElementById("adminLoginOverlay").classList.remove("visible");
+            };
+            window.verificarPasswordAdmin = function () {
+                const val = document.getElementById("adminPasswordInput").value;
+                if (val === ADMIN_PASSWORD) {
+                    document.getElementById("adminLoginOverlay").classList.remove("visible");
+                    abrirAdmin();
+                } else {
+                    document.getElementById("adminPasswordError").style.display = "block";
+                    document.getElementById("adminPasswordInput").value = "";
+                    document.getElementById("adminPasswordInput").focus();
+                }
+            };
+            window.abrirAdmin = function () {
+                document.getElementById("modalAdmin").classList.add("visible");
+                renderizarAdminTab(adminTabActual);
+            };
+            window.cerrarAdmin = function () {
+                document.getElementById("modalAdmin").classList.remove("visible");
+            };
+            window.cambiarAdminTab = function (tab, btn) {
+                adminTabActual = tab;
+                document.querySelectorAll(".admin-tab").forEach((b) => b.classList.remove("activo"));
+                btn.classList.add("activo");
+                [
+                    "finanzas",
+                    "plantillas",
+                    "procedimientos",
+                    "estados",
+                    "especialidades",
+                    "dentistas",
+                    "recepcionistas",
+                    "firebase",
+                    "datos"
+                ].forEach((t) => {
+                    const el = document.getElementById("adminTab-" + t);
+                    if (el) el.style.display = t === tab ? "block" : "none";
+                });
+                renderizarAdminTab(tab);
+            };
+
+            function renderAdminFinanzas() {
+                document.getElementById("adminIvaPct").value = datos.config?.iva !== undefined ? datos.config.iva : 16;
+                const hoy = getFechaLocal();
+                document.getElementById("ajusteFecha").value = hoy;
+                const t = document.getElementById("tablaFinanzasAdmin");
+                if (!t) return;
+                const sortedPagos = [...datos.pagos].sort((a, b) => (b.fecha || "").localeCompare(a.fecha || ""));
+                if (sortedPagos.length === 0) {
+                    t.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-3);padding:16px;">No hay movimientos registrados.</td></tr>`;
+                    return;
+                }
+                t.innerHTML = sortedPagos
+                    .map((p) => {
+                        if (!p) return "";
+                        const displayNotas = p.notes || p.notas || "";
+                        return `<tr><td><strong>${p.fecha || ""}</strong></td><td><span>${p.pacienteNombre || "Ajuste"}</span>${displayNotas ? `<br><small style="color:var(--text-2);font-size:0.72rem;">✏️ ${displayNotas}</small>` : ""}</td><td style="font-weight:700;color:${(p.monto || 0) < 0 ? "var(--danger)" : "var(--secondary)"};">${(p.monto || 0) < 0 ? "-" : ""}$${Math.abs(p.monto || 0).toFixed(2)}</td><td><span class="tag tag-${p.metodo || "efectivo"}">${p.metodo || "efectivo"}</span></td><td><div style="display:flex;gap:4px;"><button class="btn btn-xs" style="background:var(--accent);color:white;" onclick="iniciarEdicionTransaccion('${p.id}')"><i class="ph-bold ph-pencil-simple"></i></button><button class="btn btn-xs btn-danger" onclick="eliminarTransaccionCaja('${p.id}')"><i class="ph-bold ph-trash"></i></button></div></td></tr>`;
+                    })
+                    .join("");
+            }
+
+            window.agregarAjusteManual = function () {
+                const concepto = document.getElementById("ajusteConcepto").value.trim();
+                const monto = parseFloat(document.getElementById("ajusteMonto").value);
+                const metodo = document.getElementById("ajusteMetodo").value;
+                const fecha = document.getElementById("ajusteFecha").value;
+                if (!concepto || isNaN(monto) || !fecha) {
+                    return mostrarAlerta("Completa todos los campos.", "error");
+                }
+                const nuevoAjuste = {
+                    id: "ajuste-" + Date.now(),
+                    citaId: "ajuste-manual",
+                    fecha,
+                    pacienteId: "ajuste",
+                    pacienteNombre: `[AJUSTE] ${concepto}`,
+                    monto,
+                    metodo: "ajuste",
+                    servicio: "ajuste_caja",
+                    medicoId: "",
+                    notas: "Movimiento directo en Caja manual"
+                };
+                datos.pagos.push(nuevoAjuste);
+                savePago(nuevoAjuste);
+                renderAdminFinanzas();
+                mostrarAlerta("Ajuste registrado.", "exito");
+                document.getElementById("ajusteConcepto").value = "";
+                document.getElementById("ajusteMonto").value = "";
+            };
+
+            window.iniciarEdicionTransaccion = function (id) {
+                const p = datos.pagos.find((x) => x.id === id);
+                if (!p) return;
+                document.getElementById("editTransId").value = p.id;
+                document.getElementById("editTransConcepto").value = p.pacienteNombre || "";
+                document.getElementById("editTransMonto").value = p.monto || 0;
+                document.getElementById("editTransMetodo").value = p.metodo || "efectivo";
+                document.getElementById("editTransFecha").value = p.fecha || "";
+                document.getElementById("editorTransaccionDiv").style.display = "block";
+                document.getElementById("editorTransaccionDiv").scrollIntoView({ behavior: "smooth" });
+            };
+            window.cancelarEdicionTransaccion = function () {
+                document.getElementById("editorTransaccionDiv").style.display = "none";
+                document.getElementById("editTransId").value = "";
+            };
+            window.guardarEdicionTransaccion = function () {
+                const id = document.getElementById("editTransId").value;
+                const concepto = document.getElementById("editTransConcepto").value.trim();
+                const monto = parseFloat(document.getElementById("editTransMonto").value);
+                const metodo = document.getElementById("editTransMetodo").value;
+                const fecha = document.getElementById("editTransFecha").value;
+                if (!id || !concepto || isNaN(monto) || !fecha) {
+                    return mostrarAlerta("Revisa los campos.", "error");
+                }
+                const p = datos.pagos.find((x) => x.id === id);
+                if (!p) return;
+                p.pacienteNombre = concepto;
+                p.monto = monto;
+                p.metodo = metodo;
+                p.fecha = fecha;
+                savePago(p);
+                if (p.citaId && p.citaId !== "ajuste-manual") {
+                    const cita = datos.citas.find((c) => c.id === p.citaId);
+                    if (cita) {
+                        cita.monto = Math.abs(monto);
+                        cita.metodoPago = metodo;
+                        saveCita(cita);
+                    }
+                }
+                document.getElementById("editorTransaccionDiv").style.display = "none";
+                renderAdminFinanzas();
+                mostrarAlerta("Transacción modificada.", "exito");
+            };
+            window.eliminarTransaccionCaja = function (id) {
+                const p = datos.pagos.find((x) => x.id === id);
+                if (!p) return;
+                if (confirm(`¿Eliminar cobro de "${p.pacienteNombre}" por $${p.monto}?`)) {
+                    if (p.citaId && p.citaId !== "ajuste-manual") {
+                        const cita = datos.citas.find((c) => c.id === p.citaId);
+                        if (cita) {
+                            cita.metodoPago = "pendiente";
+                            if (cita.estado === "completada") cita.estado = "confirmada";
+                        }
+                    }
+                    datos.pagos = datos.pagos.filter((x) => x.id !== id);
+                    deletePago(id);
+                    if (p.citaId && p.citaId !== "ajuste-manual") {
+                        const cita = datos.citas.find((c) => c.id === p.citaId);
+                        if (cita) saveCita(cita);
+                    }
+                    renderAdminFinanzas();
+                    mostrarAlerta("Transacción eliminada.", "exito");
+                }
+            };
+
+            function renderAdminDentistas() {
+                const espNombres = Object.fromEntries(
+                    (datos.admin?.especialidades || []).map((e) => [e.value, `${e.emoji} ${e.label}`])
+                );
+                const sel = document.getElementById("adminEspecialidadMedico");
+                if (sel)
+                    sel.innerHTML =
+                        '<option value="">Seleccionar...</option>' +
+                        (datos.admin?.especialidades || [])
+                            .map((e) => `<option value="${e.value}">${e.emoji} ${e.label}</option>`)
+                            .join("");
+                const c = document.getElementById("adminListaDentistas");
+                if (!c) return;
+                c.innerHTML =
+                    datos.medicos.length === 0
+                        ? '<p style="color:var(--text-3);">No hay dentistas registrados.</p>'
+                        : datos.medicos
+                              .map(
+                                  (m) =>
+                                      `<div class="item-gestion"><div style="flex:1;"><span>${m.nombre}</span>${m.especialidad ? `<br><small style="color:var(--text-2);">${espNombres[m.especialidad] || m.especialidad}</small>` : ""}${m.cedula ? `<br><small style="color:var(--text-2);">Céd: ${m.cedula}</small>` : ""}</div><button class="btn btn-xs btn-danger" onclick="solicitarEliminacionItem('medico','${m.id}')"><i class="ph-bold ph-trash"></i></button></div>`
+                              )
+                              .join("");
+            }
+
+            window.agregarDentistaDesdeAdmin = function () {
+                const nombre = document.getElementById("adminNombreMedico").value.trim();
+                if (!nombre) return mostrarAlerta("El nombre es obligatorio.", "error");
+                const nuevoMed = {
+                    id: "med-" + Date.now().toString(),
+                    nombre,
+                    especialidad: document.getElementById("adminEspecialidadMedico").value,
+                    telefono: document.getElementById("adminTelefonoMedico").value.trim(),
+                    cedula: document.getElementById("adminCedulaMedico").value.trim()
+                };
+                datos.medicos.push(nuevoMed);
+                saveMedico(nuevoMed);
+                document.getElementById("adminNombreMedico").value = "";
+                document.getElementById("adminTelefonoMedico").value = "";
+                document.getElementById("adminCedulaMedico").value = "";
+                renderAdminDentistas();
+                mostrarAlerta("Dentista agregado.", "exito");
+            };
+
+            const VARS_WA = [
+                "{{nombre}}",
+                "{{nombreCompleto}}",
+                "{{consultorio}}",
+                "{{fecha}}",
+                "{{hora}}",
+                "{{procedimiento}}",
+                "{{telConsultorio}}",
+                "{{telefono}}"
+            ];
+            function renderAdminPlantillas() {
+                const c = document.getElementById("adminPlantillasContainer");
+                const plantillas = datos.admin?.plantillas || {};
+                const defs = [
+                    { key: "recordatorio", icon: "🔔", titulo: "Recordatorio" },
+                    { key: "confirmacion", icon: "✅", titulo: "Confirmación" },
+                    { key: "cancelacion", icon: "❌", titulo: "Cancelación" }
+                ];
+                c.innerHTML = defs
+                    .map(
+                        (p) =>
+                            `<div class="plantilla-card"><h4>${p.icon} ${p.titulo}</h4><textarea id="plantilla-${p.key}" rows="5" style="font-size:0.8rem;font-family:monospace;">${plantillas[p.key] || ""}</textarea><div style="margin-top:8px;font-size:0.75rem;color:var(--text-2);"><strong>Variables (clic para insertar):</strong><br>${VARS_WA.map((v) => `<span class="vars-chip" onclick="insertarVar('plantilla-${p.key}','${v}')">${v}</span>`).join("")}</div></div>`
+                    )
+                    .join("");
+            }
+
+            window.insertarVar = function (textareaId, variable) {
+                const ta = document.getElementById(textareaId);
+                const start = ta.selectionStart,
+                    end = ta.selectionEnd;
+                ta.value = ta.value.slice(0, start) + variable + ta.value.slice(end);
+                ta.selectionStart = ta.selectionEnd = start + variable.length;
+                ta.focus();
+            };
+
+            function renderAdminCategorias(tipo, containerId) {
+                const c = document.getElementById(containerId);
+                const items = datos.admin?.[tipo] || [];
+                c.innerHTML = items
+                    .map(
+                        (item, i) =>
+                            `<div class="categoria-item" data-tipo="${tipo}" data-index="${i}" data-value="${item.value || ""}"><input type="text" class="cat-emoji" value="${item.emoji || ""}" placeholder="🦷" title="Emoji"><input type="text" class="cat-label" value="${item.label || ""}" placeholder="Nombre..."><button class="btn-del" onclick="eliminarCategoria('${tipo}',${i})"><i class="ph-bold ph-trash"></i></button></div>`
+                    )
+                    .join("");
+            }
+
+            function renderizarAdminTab(tab) {
+                if (tab === "finanzas") renderAdminFinanzas();
+                else if (tab === "plantillas") renderAdminPlantillas();
+                else if (tab === "procedimientos")
+                    renderAdminCategorias("procedimientos", "adminProcedimientosContainer");
+                else if (tab === "estados") renderAdminCategorias("estados", "adminEstadosContainer");
+                else if (tab === "especialidades")
+                    renderAdminCategorias("especialidades", "adminEspecialidadesContainer");
+                else if (tab === "dentistas") renderAdminDentistas();
+                else if (tab === "recepcionistas") renderAdminRecepcionistas();
+                else if (tab === "firebase") renderAdminFirebase();
+                else if (tab === "datos") {} // sin render especial
+            }
+
+            window.eliminarCategoria = function (tipo, index) {
+                datos.admin[tipo].splice(index, 1);
+                renderAdminCategorias(tipo, "admin" + tipo.charAt(0).toUpperCase() + tipo.slice(1) + "Container");
+            };
+            window.agregarCategoria = function (tipo) {
+                const emojiId = {
+                    procedimientos: "newProcEmoji",
+                    estados: "newEstadoEmoji",
+                    especialidades: "newEspEmoji"
+                }[tipo];
+                const labelId = {
+                    procedimientos: "newProcLabel",
+                    estados: "newEstadoLabel",
+                    especialidades: "newEspLabel"
+                }[tipo];
+                const emoji = document.getElementById(emojiId).value.trim() || "📌";
+                const label = document.getElementById(labelId).value.trim();
+                if (!label) return mostrarAlerta("Escribe el nombre.", "error");
+                const value = label
+                    .toLowerCase()
+                    .replace(/\s+/g, "_")
+                    .replace(/[^a-z0-9_]/g, "");
+                if (!datos.admin[tipo]) datos.admin[tipo] = [];
+                datos.admin[tipo].push({ value, emoji, label });
+                document.getElementById(labelId).value = "";
+                document.getElementById(emojiId).value = "";
+                renderAdminCategorias(tipo, "admin" + tipo.charAt(0).toUpperCase() + tipo.slice(1) + "Container");
+            };
+
+            window.guardarCambiosAdmin = function () {
+                const ivaPctInput = document.getElementById("adminIvaPct");
+                if (ivaPctInput) datos.config.iva = parseFloat(ivaPctInput.value) || 0;
+                ["recordatorio", "confirmacion", "cancelacion"].forEach((k) => {
+                    const ta = document.getElementById("plantilla-" + k);
+                    if (ta) datos.admin.plantillas[k] = ta.value;
+                });
+                ["procedimientos", "estados", "especialidades"].forEach((tipo) => {
+                    const containerId = "admin" + tipo.charAt(0).toUpperCase() + tipo.slice(1) + "Container";
+                    const items = document.querySelectorAll(`#${containerId} .categoria-item`);
+                    if (items.length > 0) {
+                        datos.admin[tipo] = Array.from(items).map((el) => {
+                            const emoji = el.querySelector(".cat-emoji")?.value.trim() || "📌";
+                            const label = el.querySelector(".cat-label")?.value.trim();
+                            const value =
+                                el.dataset.value ||
+                                label
+                                    .toLowerCase()
+                                    .replace(/\s+/g, "_")
+                                    .replace(/[^a-z0-9_]/g, "");
+                            return { value, emoji, label };
+                        });
+                    }
+                });
+                const recepItems = document.querySelectorAll("#adminRecepcionistasContainer .categoria-item");
+                if (recepItems.length > 0) {
+                    datos.admin.recepcionistas = Array.from(recepItems).map((el, i) => {
+                        const nombreInput = el.querySelector(".cat-label");
+                        const pwdInput = el.querySelector('input[type="password"]');
+                        const existente = datos.admin.recepcionistas?.[i] || {};
+                        return {
+                            id: existente.id || "r-" + Date.now() + i,
+                            nombre: nombreInput?.value.trim() || existente.nombre || "",
+                            password: pwdInput?.value || existente.password || ""
+                        };
+                    });
+                }
+                saveData();
+                actualizarSelectsDesdeAdmin();
+                cerrarAdmin();
+                mostrarAlerta("Cambios guardados correctamente.", "exito");
+            };
+
+            function actualizarSelectsDesdeAdmin() {
+                const tipoCita = document.getElementById("tipoCita");
+                if (tipoCita && datos.admin?.procedimientos)
+                    tipoCita.innerHTML = datos.admin.procedimientos
+                        .map((p) => `<option value="${p.value}">${p.emoji} ${p.label}</option>`)
+                        .join("");
+                const estadoCita = document.getElementById("estadoCita");
+                if (estadoCita && datos.admin?.estados)
+                    estadoCita.innerHTML = datos.admin.estados
+                        .map((e) => `<option value="${e.value}">${e.emoji} ${e.label}</option>`)
+                        .join("");
+            }
+
+            // ── GUARDAR CITA ──
+            window.guardarCita = function () {
+                const id = document.getElementById("citaId").value;
+                const fecha = document.getElementById("fechaCita").value;
+                const hora = document.getElementById("horaCita").value;
+                const pacienteId = document.getElementById("pacienteCita").value;
+                const medicoId = document.getElementById("medicoCita").value;
+                const tipo = document.getElementById("tipoCita").value;
+                const estado = document.getElementById("estadoCita").value;
+                const monto = parseFloat(document.getElementById("montoCita").value) || 0;
+                const metodoPago = document.getElementById("metodoPago").value;
+                const motivo = document.getElementById("motivoCita").value.trim();
+                const recordatorio = document.getElementById("recordatorioCita").value;
+                if (!fecha || !pacienteId) return mostrarAlerta("La fecha y el paciente son obligatorios.", "error");
+
+                const cita = {
+                    id: id || Date.now().toString(),
+                    fecha,
+                    hora,
+                    pacienteId,
+                    medicoId,
+                    tipo,
+                    estado,
+                    monto,
+                    metodoPago,
+                    motivo,
+                    recordatorio,
+                    creadoEn: id
+                        ? datos.citas.find((c) => c.id === id)?.creadoEn || new Date().toISOString()
+                        : new Date().toISOString()
+                };
+                const idx = datos.citas.findIndex((c) => c.id === cita.id);
+                if (idx > -1) datos.citas[idx] = cita;
+                else datos.citas.push(cita);
+                saveCita(cita);
+
+                if (monto > 0 && metodoPago !== "pendiente") {
+                    const paciente = datos.pacientes.find((p) => p.id === pacienteId);
+                    const pagoExistenteIdx = datos.pagos.findIndex((p) => p.citaId === cita.id);
+                    let fechaPago;
+                    if (pagoExistenteIdx > -1) {
+                        fechaPago = datos.pagos[pagoExistenteIdx].fecha || getFechaLocal();
+                    } else {
+                        fechaPago = getFechaLocal();
+                    }
+                    const dataPago = {
+                        id: "pago-" + cita.id,
+                        citaId: cita.id,
+                        fecha: fechaPago,
+                        pacienteId,
+                        pacienteNombre: paciente ? paciente.nombre : "Desconocido",
+                        monto,
+                        metodo: metodoPago,
+                        servicio: tipo,
+                        medicoId,
+                        notas: ""
+                    };
+                    if (pagoExistenteIdx > -1) datos.pagos[pagoExistenteIdx] = dataPago;
+                    else datos.pagos.push(dataPago);
+                    savePago(dataPago);
+                } else {
+                    const pagoExistente = datos.pagos.find(p => p.citaId === cita.id);
+                    if (pagoExistente) {
+                        deletePago(pagoExistente.id);
+                        datos.pagos = datos.pagos.filter((p) => p.citaId !== cita.id);
+                    }
+                }
+                cerrarModales();
+                mostrarAlerta("Cita guardada correctamente.", "exito");
+            };
+
+            window.verDetallesCita = function (id) {
+                const cita = datos.citas.find((c) => c.id === id);
+                if (!cita) return;
+                const paciente = datos.pacientes.find((p) => p.id === cita.pacienteId);
+                const medico = datos.medicos.find((m) => m.id === cita.medicoId);
+                const pago = datos.pagos.find((p) => p.citaId === id);
+                const edadStr = paciente && paciente.nacimiento ? calcularEdad(paciente.nacimiento) + " años" : "N/D";
+                document.getElementById("verCitaId").value = id;
+                document.getElementById("detalleCitaContenido").innerHTML = `
+                <div class="detail-card"><p style="margin:0;font-weight:700;font-size:1rem;">${paciente ? paciente.nombre : "Paciente no encontrado"}</p><p style="margin:4px 0 0;color:var(--text-2);font-size:0.82rem;">${edadStr} · ${paciente ? paciente.genero || "" : ""}${paciente?.telefono ? " · " + paciente.telefono : ""}</p>${paciente?.notas ? `<p style="margin:6px 0 0;font-size:0.8rem;color:var(--text-2);">⚠️ ${paciente.notas}</p>` : ""}</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                    <div class="detail-card"><div class="detail-label">Fecha Médica</div><div class="detail-value">${cita.fecha} ${cita.hora || ""}</div></div>
+                    <div class="detail-card"><div class="detail-label">Estado</div><div class="detail-value status-${cita.estado}">${(cita.estado || "").toUpperCase()}</div></div>
+                    <div class="detail-card"><div class="detail-label">Procedimiento</div><div class="detail-value">${labelProcedimiento(cita.tipo)}</div></div>
+                    <div class="detail-card"><div class="detail-label">Dentista</div><div class="detail-value">${medico ? medico.nombre : "N/A"}</div></div>
+                </div>
+                ${cita.motivo ? `<div class="detail-card"><div class="detail-label">Motivo / Diagnóstico</div><div class="detail-value">${cita.motivo}</div></div>` : ""}
+                <div class="detail-card" style="background:${pago ? "#d1fae5" : "#fef3c7"};border-color:${pago ? "#6ee7b7" : "#fcd34d"};">
+                    <div class="detail-label">Registro de Cobro</div>
+                    ${pago ? `<div class="detail-value" style="color:var(--secondary);">✅ $${pago.monto.toFixed(2)} — ${pago.metodo.toUpperCase()}<br><span style="font-size:0.78rem;font-weight:400;color:var(--text-2);">Cobrado: ${pago.fecha}</span></div>` : `<div class="detail-value" style="color:#b45309;">⏳ Cobro Pendiente${cita.monto > 0 ? " ($" + cita.monto.toFixed(2) + ")" : ""}</div>`}
+                </div>`;
+                const btnContainer = document.getElementById("btnPagoDevolucion");
+                if (pago) {
+                    btnContainer.innerHTML = `<button class="btn btn-orange btn-sm" onclick="abrirDevolucion()"><i class="ph-bold ph-arrow-counter-clockwise"></i>Devolución</button>`;
+                } else {
+                    btnContainer.innerHTML = `<button class="btn btn-success btn-sm" onclick="abrirPagoRapido()"><i class="ph-bold ph-currency-dollar"></i>Registrar Cobro</button>`;
+                }
+                abrirModal("verCita");
+            };
+
+            window.abrirPagoRapido = function () {
+                const id = document.getElementById("verCitaId").value;
+                const cita = datos.citas.find((c) => c.id === id);
+                const paciente = datos.pacientes.find((p) => p.id === cita?.pacienteId);
+                document.getElementById("pagoRapidoCitaId").value = id;
+                document.getElementById("montoPagoRapido").value = cita?.monto || "";
+                document.getElementById("fechaPagoRapido").value = getFechaLocal();
+                document.getElementById("infoPagoRapido").innerHTML =
+                    `<strong>${paciente ? paciente.nombre : ""}</strong> — Cita del: ${cita?.fecha} ${cita?.hora || ""}<br><span style="color:var(--text-2);">${labelProcedimiento(cita?.tipo)}</span>`;
+                cerrarModales();
+                setTimeout(() => abrirModal("pagoRapido"), 150);
+            };
+
+            window.confirmarPagoRapido = function () {
+                const citaId = document.getElementById("pagoRapidoCitaId").value;
+                const monto = parseFloat(document.getElementById("montoPagoRapido").value) || 0;
+                const metodo = document.getElementById("metodoPagoRapido").value;
+                const fechaPago = document.getElementById("fechaPagoRapido").value;
+                const notas = document.getElementById("notasPagoRapido").value;
+                if (!monto) return mostrarAlerta("Ingresa un monto válido.", "error");
+                if (!fechaPago) return mostrarAlerta("Debes definir la fecha de transacción.", "error");
+                const cita = datos.citas.find((c) => c.id === citaId);
+                if (!cita) return;
+                const paciente = datos.pacientes.find((p) => p.id === cita.pacienteId);
+                const idx = datos.pagos.findIndex((p) => p.citaId === citaId);
+                const pago = {
+                    id: "pago-" + citaId,
+                    citaId,
+                    fecha: fechaPago,
+                    pacienteId: cita.pacienteId,
+                    pacienteNombre: paciente ? paciente.nombre : "Desconocido",
+                    monto,
+                    metodo,
+                    servicio: cita.tipo,
+                    medicoId: cita.medicoId,
+                    notes: notas,
+                    notas
+                };
+                if (idx > -1) datos.pagos[idx] = pago;
+                else datos.pagos.push(pago);
+                cita.monto = monto;
+                cita.metodoPago = metodo;
+                if (cita.estado === "pendiente" || cita.estado === "confirmada") cita.estado = "completada";
+                savePago(pago);
+                saveCita(cita);
+                cerrarModales();
+                mostrarAlerta(`Pago de $${monto.toFixed(2)} registrado.`, "exito");
+            };
+
+            window.editarDesdeVista = function () {
+                const id = document.getElementById("verCitaId").value;
+                if (id) {
+                    cerrarModales();
+                    setTimeout(() => editarCita(id), 150);
+                }
+            };
+
+            window.abrirDevolucion = function () {
+                const citaId = document.getElementById("verCitaId").value;
+                const cita = datos.citas.find((c) => c.id === citaId);
+                const pago = datos.pagos.find((p) => p.citaId === citaId);
+                const paciente = datos.pacientes.find((p) => p.id === cita?.pacienteId);
+                document.getElementById("devolucionCitaId").value = citaId;
+                document.getElementById("montoDevolucion").value = pago?.monto || "";
+                document.getElementById("fechaDevolucion").value = getFechaLocal();
+                document.getElementById("motivoDevolucion").value = "";
+                document.getElementById("infoDevolucion").innerHTML =
+                    `<strong>${paciente?.nombre || "Paciente"}</strong> — ${cita?.fecha || ""}<br><span style="color:var(--text-2);">Pago previo: <strong>$${(pago?.monto || 0).toFixed(2)}</strong> (${pago?.metodo || ""})</span>`;
+                cerrarModales();
+                setTimeout(() => abrirModal("devolucion"), 150);
+            };
+
+            window.confirmarDevolucion = function () {
+                const citaId = document.getElementById("devolucionCitaId").value;
+                const monto = parseFloat(document.getElementById("montoDevolucion").value) || 0;
+                const motivo = document.getElementById("motivoDevolucion").value.trim();
+                const fechaDev = document.getElementById("fechaDevolucion").value;
+                if (!monto) return mostrarAlerta("Ingresa el monto a devolver.", "error");
+                if (!fechaDev) return mostrarAlerta("Ingresa la fecha de la devolución.", "error");
+                const cita = datos.citas.find((c) => c.id === citaId);
+                if (!cita) return;
+                const paciente = datos.pacientes.find((p) => p.id === cita.pacienteId);
+               const devPago = {
+                    id: "dev-" + Date.now(),
+                    citaId,
+                    fecha: fechaDev,
+                    pacienteId: cita.pacienteId,
+                    pacienteNombre: `[DEVOLUCIÓN] ${paciente?.nombre || "Desconocido"}`,
+                    monto: -monto,
+                    metodo: "devolucion",
+                    servicio: cita.tipo,
+                    medicoId: cita.medicoId,
+                    notas: motivo || "Devolución"
+                };
+                datos.pagos.push(devPago);
+                savePago(devPago);
+                cita.estado = "confirmada";
+                saveCita(cita);
+                const pagosAEliminar = datos.pagos.filter((p) => p.citaId === citaId && p.metodo !== "devolucion");
+                pagosAEliminar.forEach(p => deletePago(p.id));
+                datos.pagos = datos.pagos.filter((p) => p.citaId !== citaId || p.metodo === "devolucion");
+                cerrarModales();
+                mostrarAlerta(`Devolución de $${monto.toFixed(2)} registrada.`, "exito");
+            };
+
+            window.editarCita = function (id) {
+                citaEditando = datos.citas.find((c) => c.id === id);
+                if (!citaEditando) return;
+                cargarSelectsPacienteMedico();
+                document.getElementById("citaId").value = citaEditando.id;
+                document.getElementById("fechaCita").value = citaEditando.fecha;
+                document.getElementById("horaCita").value = citaEditando.hora || "";
+                const pac = datos.pacientes.find((p) => p.id === citaEditando.pacienteId);
+                if (pac) seleccionarPaciente(pac.id, pac.nombre);
+                document.getElementById("medicoCita").value = citaEditando.medicoId || "";
+                document.getElementById("tipoCita").value = citaEditando.tipo;
+                document.getElementById("estadoCita").value = citaEditando.estado;
+                document.getElementById("montoCita").value = citaEditando.monto || "";
+                document.getElementById("metodoPago").value = citaEditando.metodoPago || "pendiente";
+                document.getElementById("motivoCita").value = citaEditando.motivo || "";
+                document.getElementById("recordatorioCita").value = citaEditando.recordatorio || "ninguno";
+                document.getElementById("seccionWhatsapp").style.display =
+                    citaEditando.recordatorio && citaEditando.recordatorio !== "ninguno" ? "block" : "none";
+                document.getElementById("tituloCita").textContent = "Modificar Cita";
+                document.getElementById("eliminarCitaContainer").style.display = "block";
+                document.getElementById("modalFondo").style.display = "block";
+                document.getElementById("nuevaCita").style.display = "block";
+            };
+
+            // ── PACIENTES ──
+            let _estadoCitaGuardado = null;
+
+            window.abrirModalRapidoPaciente = function () {
+                _estadoCitaGuardado = {
+                    id: document.getElementById("citaId").value,
+                    fecha: document.getElementById("fechaCita").value,
+                    hora: document.getElementById("horaCita").value,
+                    pacienteId: document.getElementById("pacienteCita").value,
+                    medicoId: document.getElementById("medicoCita").value,
+                    tipo: document.getElementById("tipoCita").value,
+                    estado: document.getElementById("estadoCita").value,
+                    monto: document.getElementById("montoCita").value,
+                    metodo: document.getElementById("metodoPago").value,
+                    motivo: document.getElementById("motivoCita").value,
+                    recordatorio: document.getElementById("recordatorioCita").value,
+                    buscadorNombre: document.getElementById("buscadorSeleccionadoNombre").innerHTML,
+                    buscadorVisible: document.getElementById("buscadorSeleccionado").classList.contains("visible"),
+                    esEdicion: !!citaEditando
+                };
+                ["rNombrePaciente", "rTelefonoPaciente", "rEmailPaciente", "rNotasPaciente"].forEach((id) => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = "";
+                });
+                document.getElementById("rNacimientoPaciente").value = "";
+                document.getElementById("rGeneroPaciente").value = "";
+                document.getElementById("nuevaCita").style.display = "none";
+                document.getElementById("nuevoPacienteRapido").style.display = "block";
+                document.getElementById("modalFondo").style.display = "block";
+                setTimeout(() => document.getElementById("rNombrePaciente").focus(), 100);
+            };
+
+            window.cancelarPacienteRapido = function () {
+                document.getElementById("nuevoPacienteRapido").style.display = "none";
+                if (_estadoCitaGuardado) restaurarFormCita(_estadoCitaGuardado);
+                else document.getElementById("modalFondo").style.display = "none";
+            };
+
+            window.guardarPacienteRapido = function () {
+                const nombre = document.getElementById("rNombrePaciente").value.trim();
+                if (!nombre) return mostrarAlerta("El nombre es obligatorio.", "error");
+                const nuevoPac = {
+                    id: "pac-" + Date.now().toString(),
+                    nombre,
+                    telefono: document.getElementById("rTelefonoPaciente").value.trim(),
+                    nacimiento: document.getElementById("rNacimientoPaciente").value,
+                    genero: document.getElementById("rGeneroPaciente").value,
+                    email: document.getElementById("rEmailPaciente").value.trim(),
+                    notes: document.getElementById("rNotasPaciente").value.trim(),
+                    notas: document.getElementById("rNotasPaciente").value.trim(),
+                    creadoEn: new Date().toISOString()
+                };
+                datos.pacientes.push(nuevoPac);
+                savePaciente(nuevoPac);
+                document.getElementById("nuevoPacienteRapido").style.display = "none";
+                if (_estadoCitaGuardado) {
+                    restaurarFormCita(_estadoCitaGuardado);
+                    setTimeout(() => {
+                        cargarSelectsPacienteMedico();
+                        seleccionarPaciente(nuevoPac.id, nuevoPac.nombre);
+                        mostrarAlerta(`Paciente "${nombre}" agregado.`, "exito");
+                    }, 50);
+                }
+            };
+
+            function restaurarFormCita(estado) {
+                document.getElementById("nuevaCita").style.display = "block";
+                document.getElementById("modalFondo").style.display = "block";
+                document.getElementById("citaId").value = estado.id || "";
+                document.getElementById("fechaCita").value = estado.fecha || "";
+                document.getElementById("horaCita").value = estado.hora || "";
+                document.getElementById("pacienteCita").value = estado.pacienteId || "";
+                document.getElementById("medicoCita").value = estado.medicoId || "";
+                if (estado.tipo) document.getElementById("tipoCita").value = estado.tipo;
+                if (estado.estado) document.getElementById("estadoCita").value = estado.estado;
+                document.getElementById("montoCita").value = estado.monto || "";
+                document.getElementById("metodoPago").value = estado.metodo || "pendiente";
+                document.getElementById("motivoCita").value = estado.motivo || "";
+                document.getElementById("recordatorioCita").value = estado.recordatorio || "ninguno";
+                document.getElementById("seccionWhatsapp").style.display =
+                    estado.recordatorio && estado.recordatorio !== "ninguno" ? "block" : "none";
+                if (estado.buscadorVisible) {
+                    document.getElementById("buscadorSeleccionadoNombre").innerHTML = estado.buscadorNombre;
+                    document.getElementById("buscadorSeleccionado").classList.add("visible");
+                }
+                document.getElementById("eliminarCitaContainer").style.display = estado.id ? "block" : "none";
+                document.getElementById("tituloCita").textContent = estado.esEdicion ? "Modificar Cita" : "Nueva Cita";
+            }
+
+            window.agregarPaciente = function () {
+                const nombre = document.getElementById("nombrePaciente").value.trim();
+                if (!nombre) return mostrarAlerta("El nombre es obligatorio.", "error");
+               const nuevoPac = {
+                    id: "pac-" + Date.now().toString(),
+                    nombre,
+                    telefono: document.getElementById("telefonoPaciente").value.trim(),
+                    nacimiento: document.getElementById("nacimientoPaciente").value,
+                    genero: document.getElementById("generoPaciente").value,
+                    email: document.getElementById("emailPaciente").value.trim(),
+                    notes: document.getElementById("notasPaciente").value.trim(),
+                    notas: document.getElementById("notasPaciente").value.trim(),
+                    creadoEn: new Date().toISOString()
+                };
+                datos.pacientes.push(nuevoPac);
+                savePaciente(nuevoPac);
+                document.getElementById("nombrePaciente").value = "";
+                document.getElementById("telefonoPaciente").value = "";
+                document.getElementById("emailPaciente").value = "";
+                document.getElementById("notasPaciente").value = "";
+                renderizarListaPacientes();
+                mostrarAlerta("Paciente agregado.", "exito");
+            };
+
+            window.renderizarListaPacientes = function () {
+                const c = document.getElementById("listaPacientes");
+                if (!c) return;
+                c.innerHTML =
+                    '<h4 style="margin:0 0 10px;font-size:0.9rem;">Pacientes Registrados (' +
+                    datos.pacientes.length +
+                    ")</h4>" +
+                    (datos.pacientes.length > 0
+                        ? datos.pacientes
+                              .map(
+                                  (p) =>
+                                      `<div class="item-gestion"><div style="flex:1;cursor:pointer;" onclick="cerrarModales();setTimeout(()=>abrirExpediente('${p.id}'),150);"><span>${p.nombre || "Sin nombre"}</span>${p.telefono ? `<br><small style="color:var(--text-2);">${p.telefono}</small>` : ""}</div><button class="btn btn-xs btn-danger" onclick="event.stopPropagation();solicitarEliminacionItem('paciente','${p.id}')"><i class="ph-bold ph-trash"></i></button></div>`
+                              )
+                              .join("")
+                        : '<p style="color:var(--text-3);">No hay pacientes registrados.</p>');
+            };
+
+            // ── CORTE DE CAJA ──
+            window.calcularCorte = function () {
+                const desde = document.getElementById("corteDesde").value;
+                const hasta = document.getElementById("corteHasta").value;
+                if (!desde || !hasta) return mostrarAlerta("Selecciona el rango de fechas.", "error");
+                const pagosFiltrados = datos.pagos.filter(
+                    (p) => p && p.fecha && p.fecha >= desde && p.fecha <= hasta && p.monto > 0
+                );
+                const devoluciones = datos.pagos.filter(
+                    (p) => p && p.fecha && p.fecha >= desde && p.fecha <= hasta && p.monto < 0
+                );
+                const totalIngresos = pagosFiltrados.reduce((s, p) => s + (p.monto || 0), 0);
+                const totalDevoluciones = Math.abs(devoluciones.reduce((s, p) => s + (p.monto || 0), 0));
+                const totalNeto = totalIngresos - totalDevoluciones;
+                const ivaPorcentaje = datos.config?.iva !== undefined ? datos.config.iva : 16;
+                const subtotal = totalNeto / (1 + ivaPorcentaje / 100);
+                const ivaMonto = totalNeto - subtotal;
+                const porMetodo = { efectivo: 0, tarjeta: 0, transferencia: 0, ajuste: 0, devolucion: 0 };
+                datos.pagos
+                    .filter((p) => p && p.fecha && p.fecha >= desde && p.fecha <= hasta)
+                    .forEach((p) => {
+                        if (p.metodo && porMetodo[p.metodo] !== undefined) porMetodo[p.metodo] += p.monto || 0;
+                    });
+                const citasPeriodo = datos.citas.filter((c) => c && c.fecha && c.fecha >= desde && c.fecha <= hasta);
+                const citasConPago = citasPeriodo.filter((c) =>
+                    datos.pagos.find((p) => p.citaId === c.id && p.monto > 0)
+                ).length;
+                const citasPendientes = citasPeriodo.filter(
+                    (c) => c.estado !== "completada" && c.estado !== "cancelada"
+                ).length;
+                const citasCanceladas = citasPeriodo.filter((c) => c.estado === "cancelada").length;
+                const porMedico = {};
+                pagosFiltrados.forEach((p) => {
+                    const med = datos.medicos.find((m) => m.id === p.medicoId);
+                    const key = med ? med.nombre : "Sin dentista";
+                    porMedico[key] = (porMedico[key] || 0) + (p.monto || 0);
+                });
+                const recepNombre = recepActual?.nombre || "No registrado";
+                document.getElementById("resultadosCorte").innerHTML = `
+                <div class="corte-seccion"><h4>📅 Período: ${desde} → ${hasta}</h4>
+                    <div class="corte-fila"><span>Total citas médicas</span><strong>${citasPeriodo.length}</strong></div>
+                    <div class="corte-fila"><span>Con cobro de caja</span><strong>${citasConPago}</strong></div>
+                    <div class="corte-fila"><span>Pendientes</span><strong>${citasPendientes}</strong></div>
+                    <div class="corte-fila"><span>Canceladas</span><strong>${citasCanceladas}</strong></div>
+                </div>
+                <div class="corte-seccion"><h4>💰 Transacciones de Caja</h4>
+                    <div class="corte-fila"><span>💵 Efectivo</span><span class="${porMetodo.efectivo < 0 ? "monto-negativo" : "monto-positivo"}">$${porMetodo.efectivo.toFixed(2)}</span></div>
+                    <div class="corte-fila"><span>💳 Tarjeta</span><span class="${porMetodo.tarjeta < 0 ? "monto-negativo" : "monto-positivo"}">$${porMetodo.tarjeta.toFixed(2)}</span></div>
+                    <div class="corte-fila"><span>🏦 Transferencia</span><span class="${porMetodo.transferencia < 0 ? "monto-negativo" : "monto-positivo"}">$${porMetodo.transferencia.toFixed(2)}</span></div>
+                    ${porMetodo.ajuste !== 0 ? `<div class="corte-fila"><span>🔧 Ajustes</span><span class="${porMetodo.ajuste < 0 ? "monto-negativo" : "monto-positivo"}">$${porMetodo.ajuste.toFixed(2)}</span></div>` : ""}
+                    ${porMetodo.devolucion !== 0 ? `<div class="corte-fila"><span>↩️ Devoluciones</span><span class="monto-negativo">-$${Math.abs(porMetodo.devolucion).toFixed(2)}</span></div>` : ""}
+                    <div class="corte-fila" style="border-top:1px dashed var(--border);padding-top:6px;margin-top:6px;font-size:0.82rem;"><span>Subtotal (Base)</span><span>$${subtotal.toFixed(2)}</span></div>
+                    <div class="corte-fila" style="font-size:0.82rem;"><span>IVA (${ivaPorcentaje}%)</span><span>$${ivaMonto.toFixed(2)}</span></div>
+                    <div class="corte-fila total"><span>TOTAL EN CAJA</span><span class="monto-positivo">$${totalNeto.toFixed(2)}</span></div>
+                </div>
+                ${
+                    Object.keys(porMedico).length > 0
+                        ? `<div class="corte-seccion"><h4>👨‍⚕️ Ingresos por Dentista</h4>${Object.entries(porMedico)
+                              .map(
+                                  ([n, m]) =>
+                                      `<div class="corte-fila"><span>${n}</span><span class="monto-positivo">$${m.toFixed(2)}</span></div>`
+                              )
+                              .join("")}</div>`
+                        : ""
+                }
+                <div class="corte-seccion"><h4>📋 Movimientos del Período</h4>
+                ${
+                    datos.pagos.filter((p) => p && p.fecha && p.fecha >= desde && p.fecha <= hasta).length === 0
+                        ? '<p style="color:var(--text-3);">Sin movimientos.</p>'
+                        : datos.pagos
+                              .filter((p) => p && p.fecha && p.fecha >= desde && p.fecha <= hasta)
+                              .slice()
+                              .reverse()
+                              .map(
+                                  (p) =>
+                                      `<div class="corte-fila" style="font-size:0.82rem;"><span>${p.fecha || ""} — ${p.pacienteNombre || "Ajuste"}</span><span class="${(p.monto || 0) < 0 ? "monto-negativo" : "monto-positivo"}">${(p.monto || 0) < 0 ? "-" : ""}$${Math.abs(p.monto || 0).toFixed(2)} <span style="color:var(--text-3);font-size:0.72rem;">${p.metodo || ""}</span></span></div>`
+                              )
+                              .join("")
+                }</div>`;
+
+                _ultimoCorteData = {
+                    id: "corte-" + Date.now(),
+                    fecha: new Date().toISOString(),
+                    desde,
+                    hasta,
+                    recepcionista: recepNombre,
+                    totalNeto,
+                    totalIngresos,
+                    totalDevoluciones,
+                    subtotal,
+                    ivaMonto,
+                    ivaPorcentaje,
+                    porMetodo: { ...porMetodo },
+                    porMedico: { ...porMedico },
+                    citasPeriodo: citasPeriodo.length,
+                    citasConPago,
+                    citasPendientes,
+                    citasCanceladas,
+                    pagos: datos.pagos.filter((p) => p && p.fecha && p.fecha >= desde && p.fecha <= hasta),
+                    consultorio: datos.config?.nombre || "Consultorio"
+                };
+
+                // Print area
+                const printArea = document.getElementById("printArea");
+                if (printArea) {
+                    printArea.innerHTML = `<div style="font-family:'Inter',sans-serif;color:#1e293b;padding:40px;max-width:800px;margin:0 auto;"><div style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #0ea5e9;padding-bottom:20px;margin-bottom:25px;"><div><h1 style="font-size:24px;font-weight:800;color:#0ea5e9;margin:0 0 4px;">Ortho Smile SJR</h1><p style="font-size:11px;color:#64748b;margin:0;">${datos.config?.direccion || ""}</p><p style="font-size:11px;color:#64748b;margin:0;">Tel: ${datos.config?.telefono || "N/A"}</p></div><div style="text-align:right;"><span style="background:#e0f2fe;color:#0369a1;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700;">REPORTE OFICIAL</span><h2 style="font-size:14px;font-weight:700;margin:8px 0 0;">CORTE DE CAJA</h2></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;font-size:12px;margin-bottom:24px;background:#f8fafc;padding:14px;border-radius:8px;border:1px solid #e2e8f0;"><div><p style="margin:0 0 4px;"><strong>Período:</strong> ${desde} al ${hasta}</p><p style="margin:0;"><strong>Recepcionista:</strong> ${recepNombre}</p></div><div style="text-align:right;"><p style="margin:0 0 4px;"><strong>Impresión:</strong> ${new Date().toLocaleString("es-MX")}</p></div></div><table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:24px;"><thead><tr style="background:#f1f5f9;"><th style="padding:6px 8px;text-align:left;border-bottom:2px solid #cbd5e1;">Fecha</th><th style="padding:6px 8px;text-align:left;border-bottom:2px solid #cbd5e1;">Paciente / Concepto</th><th style="padding:6px 8px;text-align:right;border-bottom:2px solid #cbd5e1;">Monto</th><th style="padding:6px 8px;text-align:center;border-bottom:2px solid #cbd5e1;">Método</th></tr></thead><tbody>${datos.pagos
+                        .filter((p) => p && p.fecha && p.fecha >= desde && p.fecha <= hasta)
+                        .map(
+                            (p) =>
+                                `<tr style="border-bottom:1px solid #e2e8f0;"><td style="padding:6px 8px;">${p.fecha}</td><td style="padding:6px 8px;font-weight:600;">${p.pacienteNombre || ""}</td><td style="padding:6px 8px;text-align:right;font-weight:600;color:${(p.monto || 0) < 0 ? "#ef4444" : "#1e293b"};">${(p.monto || 0) < 0 ? "-" : ""}$${Math.abs(p.monto || 0).toFixed(2)}</td><td style="padding:6px 8px;text-align:center;">${p.metodo}</td></tr>`
+                        )
+                        .join(
+                            ""
+                        )}</tbody><tfoot><tr style="border-top:2px solid #1e293b;"><td colspan="2" style="padding:10px 8px;font-weight:800;">TOTAL NETO EN CAJA</td><td style="padding:10px 8px;text-align:right;font-weight:800;font-size:16px;color:#10b981;">$${totalNeto.toFixed(2)}</td><td></td></tr></tfoot></table></div>`;
+                }
+
+                const cortesGuardados = JSON.parse(localStorage.getItem("consultorio_cortes") || "[]");
+                cortesGuardados.unshift({ ..._ultimoCorteData, pagos: pagosFiltrados.length });
+                localStorage.setItem("consultorio_cortes", JSON.stringify(cortesGuardados.slice(0, 100)));
+                if (!datos.cortes) datos.cortes = [];
+                datos.cortes.unshift({ ..._ultimoCorteData, pagos: pagosFiltrados.length });
+                datos.cortes = datos.cortes.slice(0, 100);
+                const csvBtn = document.getElementById("btnDescargarCSV");
+                const turnoBtn = document.getElementById("btnCerrarTurno");
+                if (csvBtn) csvBtn.style.display = "inline-flex";
+                if (turnoBtn) turnoBtn.style.display = "inline-flex";
+                const savedBadge = document.getElementById("corteGuardadoBadge");
+                if (savedBadge) {
+                    savedBadge.style.display = "inline-flex";
+                    savedBadge.textContent = `✅ Guardado — ${new Date().toLocaleTimeString("es-MX")}`;
+                }
+                descargarCorteCSV();
+            };
+
+            window.verHistorialCortes = function () {
+                const panel = document.getElementById("historialCortesPanel");
+                if (!panel) return;
+                panel.style.display = panel.style.display === "none" ? "block" : "none";
+                if (panel.style.display === "none") return;
+                const local = JSON.parse(localStorage.getItem("consultorio_cortes") || "[]");
+                const nube = datos.cortes || [];
+                const todos = [...local];
+                nube.forEach((c) => {
+                    if (c && !todos.find((t) => t.id === c.id)) todos.push(c);
+                });
+                todos.sort((a, b) => (b.fecha || "").localeCompare(a.fecha || ""));
+                if (todos.length === 0) {
+                    panel.innerHTML =
+                        '<p style="color:var(--text-3);text-align:center;padding:14px;">No hay cortes guardados.</p>';
+                    return;
+                }
+                panel.innerHTML =
+                    '<h4 style="margin:0 0 12px;font-size:0.85rem;color:var(--text-2);">HISTORIAL DE CORTES</h4>' +
+                    todos
+                        .map((c) => {
+                            if (!c) return "";
+                            return `<div class="corte-seccion" style="margin-bottom:8px;"><div class="corte-fila"><span style="font-weight:600;">${c.desde || ""} → ${c.hasta || ""}</span><span class="monto-positivo">$${(c.totalNeto || 0).toFixed(2)}</span></div><div class="corte-fila" style="font-size:0.75rem;color:var(--text-2);"><span>${new Date(c.fecha).toLocaleString("es-MX")}</span><span>IVA: $${(c.ivaMonto || 0).toFixed(2)}</span></div></div>`;
+                        })
+                        .join("");
+            };
+
+            window.imprimirCorte = function () {
+                window.print();
+            };
+
+            // ── CONFIG ──
+            window.guardarConfig = function () {
+                datos.config = {
+                    nombre: document.getElementById("configNombreConsultorio").value.trim() || "Ortho Smile SJR",
+                    direccion: document.getElementById("configDireccion").value.trim(),
+                    telefono: document.getElementById("configTelefono").value.trim(),
+                    tarifa: parseFloat(document.getElementById("configTarifa").value) || 500,
+                    iva: datos.config?.iva !== undefined ? datos.config.iva : 16
+                };
+                saveConfig();
+                document.getElementById("nombreConsultorio").textContent = datos.config.nombre;
+                cerrarModales();
+                mostrarAlerta("Configuración guardada.", "exito");
+            };
+
+            // ── DASHBOARD ──
+            function actualizarDashboard() {
+                const hoy = getFechaLocal();
+                const mesActual = hoy.slice(0, 7);
+                const citasHoy = datos.citas.filter((c) => c && c.fecha === hoy && c.estado !== "cancelada").length;
+                const citasMes = datos.citas.filter(
+                    (c) => c && c.fecha && c.fecha.startsWith(mesActual) && c.estado !== "cancelada"
+                ).length;
+                const citasDeHoy = datos.citas.filter((c) => c && c.fecha === hoy).map((c) => c.id);
+                const ingresosDia = datos.pagos
+                    .filter((p) => p && p.monto > 0 && (p.fecha === hoy || citasDeHoy.includes(p.citaId)))
+                    .reduce((s, p) => s + (p.monto || 0), 0);
+                const pendientesPago = datos.citas.filter(
+                    (c) =>
+                        c &&
+                        c.estado !== "cancelada" &&
+                        c.estado !== "completada" &&
+                        c.monto > 0 &&
+                        !datos.pagos.find((p) => p.citaId === c.id)
+                ).length;
+                document.getElementById("statCitasHoy").textContent = citasHoy;
+                document.getElementById("statCitasMes").textContent = citasMes;
+                document.getElementById("statPacientes").textContent = datos.pacientes.length;
+                document.getElementById("statIngresosDia").textContent = `$${ingresosDia.toFixed(2)}`;
+                document.getElementById("statCitasPendientes").textContent = pendientesPago;
+                const nombresViejos = ["Consultorio Médico", "Consultorio Medico", "Consultorio Dental", "consultorio"];
+                if (!datos.config?.nombre || nombresViejos.includes(datos.config.nombre)) {
+                    datos.config.nombre = "Ortho Smile SJR";
+                    saveData();
+                }
+                document.getElementById("nombreConsultorio").textContent = datos.config.nombre;
+            }
+
+            function badgeDental(tipo) {
+                const mapa = {
+                    ortodoncia_brackets: "ortodoncia",
+                    ortodoncia_retenedor: "ortodoncia",
+                    endodoncia: "endodoncia",
+                    cirugia_oral: "cirugia",
+                    extraccion: "cirugia",
+                    implante: "cirugia",
+                    limpieza_profilaxis: "limpieza",
+                    periodoncia: "limpieza",
+                    blanqueamiento: "estetica",
+                    corona_protesis: "estetica",
+                    urgencia_dental: "cirugia"
+                };
+                return "badge-" + (mapa[tipo] || "otro");
+            }
+            function claseAlertaDental(tipo) {
+                if (["ortodoncia_brackets", "ortodoncia_retenedor"].includes(tipo)) return "ortodoncia";
+                if (["cirugia_oral", "extraccion", "implante", "urgencia_dental"].includes(tipo)) return "cirugia";
+                if (["limpieza_profilaxis", "periodoncia"].includes(tipo)) return "limpieza";
+                return "";
+            }
+            function labelProcedimiento(tipo) {
+                const map = {
+                    consulta_diagnostico: "Consulta / Diagnóstico",
+                    limpieza_profilaxis: "Limpieza / Profilaxis",
+                    restauracion_caries: "Restauración / Caries",
+                    extraccion: "Extracción",
+                    endodoncia: "Endodoncia",
+                    ortodoncia_brackets: "Ortodoncia / Brackets",
+                    ortodoncia_retenedor: "Retenedor / Alineadores",
+                    cirugia_oral: "Cirugía Oral",
+                    implante: "Implante",
+                    corona_protesis: "Corona / Prótesis",
+                    blanqueamiento: "Blanqueamiento",
+                    rayos_x: "Radiografías",
+                    periodoncia: "Periodoncia",
+                    pedodoncia: "Odontopediatría",
+                    primera_vez: "Primera Vez",
+                    seguimiento: "Seguimiento",
+                    urgencia_dental: "🚨 Urgencia",
+                    otro: "Otro"
+                };
+                return map[tipo] || tipo?.replace(/_/g, " ") || tipo || "Otro";
+            }
+
+            function actualizarPanelAlertas() {
+                const hoy = getFechaLocal();
+                const citasHoy = datos.citas
+                    .filter((c) => c && c.fecha === hoy && c.estado !== "cancelada")
+                    .sort((a, b) => (a.hora || "").localeCompare(b.hora || ""));
+                const cont = document.getElementById("alertasContainer");
+                const sinConfirmar = citasHoy.filter((c) => !c.confirmada).length;
+                const badge = document.getElementById("badgeSinConfirmar");
+                if (badge) {
+                    if (sinConfirmar > 0) {
+                        badge.style.display = "inline-flex";
+                        badge.textContent = sinConfirmar + " sin confirmar";
+                    } else {
+                        badge.style.display = "none";
+                    }
+                }
+                if (citasHoy.length === 0) {
+                    cont.innerHTML = '<div class="empty-state">Sin citas programadas hoy.</div>';
+                } else {
+                    cont.innerHTML = citasHoy
+                        .map((c) => {
+                            const pac = datos.pacientes.find((p) => p.id === c.pacienteId);
+                            const med = datos.medicos.find((m) => m.id === c.medicoId);
+                            const claseAlerta = claseAlertaDental(c.tipo);
+                            const badgeClass = badgeDental(c.tipo);
+                            const confirmadoLabel = c.confirmada ? "✓ Confirmado" : "Confirmar";
+                            const confirmadoClass = c.confirmada ? "confirmado" : "pendiente";
+                            return `<div class="alert-item ${claseAlerta}"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px;"><div onclick="verDetallesCita('${c.id}')" style="flex:1;cursor:pointer;"><div class="alert-pac">${pac ? pac.nombre : "Paciente"}</div><div class="alert-detail">${c.hora || "Sin hora"}${med ? " · " + med.nombre : ""}</div><span class="badge ${badgeClass}">${labelProcedimiento(c.tipo)}</span></div><button class="confirmar-btn ${confirmadoClass}" onclick="toggleConfirmacionCita('${c.id}')">${confirmadoLabel}</button></div></div>`;
+                        })
+                        .join("");
+                }
+                const manana = new Date();
+                manana.setDate(manana.getDate() + 1);
+                const mananaStr = manana.toISOString().split("T")[0];
+                const proximas = datos.citas
+                    .filter((c) => c && c.fecha && c.fecha >= mananaStr && c.estado !== "cancelada")
+                    .sort((a, b) => {
+                        const dc = (a.fecha || "").localeCompare(b.fecha || "");
+                        return dc !== 0 ? dc : (a.hora || "").localeCompare(b.hora || "");
+                    })
+                    .slice(0, 5);
+                const contProx = document.getElementById("proximasCitasContainer");
+                if (proximas.length === 0) {
+                    contProx.innerHTML = '<div class="empty-state">Sin citas próximas.</div>';
+                } else {
+                    contProx.innerHTML = proximas
+                        .map((c) => {
+                            const pac = datos.pacientes.find((p) => p.id === c.pacienteId);
+                            return `<div class="alert-item" onclick="verDetallesCita('${c.id}')"><div class="alert-pac">${pac ? pac.nombre : "Paciente"}</div><div class="alert-detail">${c.fecha || ""} ${c.hora || ""} · ${labelProcedimiento(c.tipo)}</div></div>`;
+                        })
+                        .join("");
+                }
+            }
+
+            // ── RECORDS ──
+            window.mostrarRegistros = function () {
+                const vista = document.getElementById("vistaRegistros");
+                vista.style.display = vista.style.display === "none" ? "block" : "none";
+                if (vista.style.display === "block") {
+                    filtrarDatos();
+                    filtrarPagos();
+                }
+            };
+            window.cambiarTabRegistro = function (tab, btn) {
+                tabRegistroActual = tab;
+                document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("activo"));
+                btn.classList.add("activo");
+                document.getElementById("tabCitas").style.display = tab === "citas" ? "block" : "none";
+                document.getElementById("tabPagos").style.display = tab === "pagos" ? "block" : "none";
+                if (tab === "pagos") filtrarPagos();
+            };
+
+            window.filtrarDatos = function () {
+                const fecha = document.getElementById("filtroFecha").value;
+                const busq = document.getElementById("filtroPaciente").value.toLowerCase();
+                const medId = document.getElementById("filtroMedico").value;
+                const estado = document.getElementById("filtroEstado").value;
+                let resultado = datos.citas.filter((c) => {
+                    if (!c) return false;
+                    if (fecha && c.fecha !== fecha) return false;
+                    if (estado && c.estado !== estado) return false;
+                    if (medId && c.medicoId !== medId) return false;
+                    if (busq) {
+                        const pac = datos.pacientes.find((p) => p.id === c.pacienteId);
+                        if (!pac || !pac.nombre || !pac.nombre.toLowerCase().includes(busq)) return false;
+                    }
+                    return true;
+                });
+                resultado.sort((a, b) => {
+                    const dc = (b.fecha || "").localeCompare(a.fecha || "");
+                    return dc !== 0 ? dc : (b.hora || "").localeCompare(a.hora || "");
+                });
+                renderizarTablaCitas(resultado);
+            };
+
+            function renderizarTablaCitas(citas) {
+                const tb = document.getElementById("tablaCitas");
+                if (!tb) return;
+                tb.innerHTML =
+                    citas.length === 0
+                        ? `<tr><td colspan="7" style="text-align:center;color:var(--text-3);padding:20px;">No se encontraron citas.</td></tr>`
+                        : citas
+                              .map((c) => {
+                                  const pac = datos.pacientes.find((p) => p.id === c.pacienteId);
+                                  const med = datos.medicos.find((m) => m.id === c.medicoId);
+                                  const pago = datos.pagos.find((p) => p.citaId === c.id);
+                                  return `<tr class="${c.estado === "completada" ? "completado" : ""}"><td>${c.fecha || ""} ${c.hora || ""}</td><td>${pac ? pac.nombre : "N/A"}</td><td>${med ? med.nombre : "N/A"}</td><td>${labelProcedimiento(c.tipo)}</td><td class="status-${c.estado}">${c.estado}</td><td>${pago ? `<span class="tag tag-${pago.metodo}">$${pago.monto.toFixed(2)}</span>` : c.monto > 0 ? `<span style="color:var(--accent);font-size:0.8rem;">$${c.monto.toFixed(2)} pend.</span>` : "—"}</td><td style="display:flex;gap:5px;"><button class="btn btn-xs btn-primary" onclick="editarCita('${c.id}')"><i class="ph-bold ph-pencil-simple"></i></button><button class="btn btn-xs btn-success" onclick="verDetallesCita('${c.id}')"><i class="ph-bold ph-eye"></i></button><button class="btn btn-xs btn-danger" onclick="solicitarEliminacionItemDirecto('cita','${c.id}')"><i class="ph-bold ph-trash"></i></button></td></tr>`;
+                              })
+                              .join("");
+            }
+
+            window.filtrarPagos = function () {
+                const desde = document.getElementById("filtroPagoFechaDesde").value;
+                const hasta = document.getElementById("filtroPagoFechaHasta").value;
+                const metodo = document.getElementById("filtroPagoMetodo").value;
+                const busqPac = (document.getElementById("filtroPagoPaciente")?.value || "").toLowerCase().trim();
+                let resultado = datos.pagos.filter((p) => {
+                    if (!p || !p.fecha) return false;
+                    if (desde && p.fecha < desde) return false;
+                    if (hasta && p.fecha > hasta) return false;
+                    if (metodo && p.metodo !== metodo) return false;
+                    if (busqPac && !(p.pacienteNombre || "").toLowerCase().includes(busqPac)) return false;
+                    return true;
+                });
+                resultado.sort((a, b) => (b.fecha || "").localeCompare(a.fecha || ""));
+                const tb = document.getElementById("tablaPagos");
+                const total = resultado.reduce((s, p) => s + (p.monto || 0), 0);
+                const ivaPorcentaje = datos.config?.iva !== undefined ? datos.config.iva : 16;
+                const subtotal = total / (1 + ivaPorcentaje / 100);
+                const ivaMonto = total - subtotal;
+                tb.innerHTML =
+                    (resultado.length === 0
+                        ? `<tr><td colspan="6" style="text-align:center;color:var(--text-3);padding:20px;">Sin pagos.</td></tr>`
+                        : resultado
+                              .map((p) => {
+                                  const med = datos.medicos.find((m) => m.id === p.medicoId);
+                                  const labelConcepto = p.notes || labelProcedimiento(p.servicio) || p.notas || "—";
+                                  return `<tr><td><strong>${p.fecha || ""}</strong></td><td>${p.pacienteNombre || "Ajuste"}</td><td>${labelConcepto}</td><td style="font-weight:700;color:${(p.monto || 0) < 0 ? "var(--danger)" : "var(--secondary)"};">${(p.monto || 0) < 0 ? "-" : ""}$${Math.abs(p.monto || 0).toFixed(2)}</td><td><span class="tag tag-${p.metodo || "efectivo"}">${p.metodo || "efectivo"}</span></td><td>${med ? med.nombre : "—"}</td></tr>`;
+                              })
+                              .join("")) +
+                    `<tr style="font-weight:600;background:var(--surface2);"><td colspan="3" style="text-align:right;padding:8px 14px;">Subtotal:</td><td>$${subtotal.toFixed(2)}</td><td colspan="2"></td></tr><tr style="font-weight:600;background:var(--surface2);"><td colspan="3" style="text-align:right;padding:8px 14px;">IVA (${ivaPorcentaje}%):</td><td>$${ivaMonto.toFixed(2)}</td><td colspan="2"></td></tr><tr style="font-weight:800;background:var(--surface2);font-size:1rem;"><td colspan="3" style="text-align:right;padding:10px 14px;">TOTAL:</td><td style="color:var(--secondary);">$${total.toFixed(2)}</td><td colspan="2"></td></tr>`;
+            };
+
+            // ── HELPERS ──
+            function cargarSelectsPacienteMedico() {
+                limpiarPacienteSeleccionado();
+                const espNombres = Object.fromEntries(
+                    (datos.admin?.especialidades || []).map((e) => [e.value, e.label])
+                );
+                document.getElementById("medicoCita").innerHTML =
+                    '<option value="">Seleccionar dentista...</option>' +
+                    datos.medicos
+                        .map(
+                            (m) =>
+                                `<option value="${m.id}">${m.nombre}${m.especialidad ? " [" + (espNombres[m.especialidad] || m.especialidad) + "]" : ""}</option>`
+                        )
+                        .join("");
+                actualizarSelectsDesdeAdmin();
+            }
+            function actualizarFiltroMedico() {
+                const sel = document.getElementById("filtroMedico");
+                if (!sel) return;
+                sel.innerHTML =
+                    '<option value="">Todos los dentistas</option>' +
+                    datos.medicos.map((m) => `<option value="${m.id}">${m.nombre}</option>`).join("");
+            }
+            function calcularEdad(nacimiento) {
+                if (!nacimiento) return 0;
+                const hoy = new Date();
+                const nac = new Date(nacimiento + "T00:00:00");
+                if (isNaN(nac)) return 0;
+                let edad = hoy.getFullYear() - nac.getFullYear();
+                const m = hoy.getMonth() - nac.getMonth();
+                if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) edad--;
+                return edad;
+            }
+
+            window.solicitarEliminacionItem = function (tipo, id) {
+                itemAEliminar = { tipo, id };
+                let nombre = "";
+                if (tipo === "paciente") nombre = datos.pacientes.find((p) => p.id === id)?.nombre || id;
+                if (tipo === "medico") nombre = datos.medicos.find((m) => m.id === id)?.nombre || id;
+                document.getElementById("mensajeEliminar").textContent =
+                    `¿Seguro que deseas eliminar "${nombre}"? Esta acción no se puede deshacer.`;
+                abrirModal("confirmarEliminar");
+            };
+            window.solicitarEliminacionItemDirecto = function (tipo, id) {
+                itemAEliminar = { tipo, id };
+                document.getElementById("mensajeEliminar").textContent =
+                    "¿Seguro que deseas eliminar este elemento? No se puede deshacer.";
+                abrirModal("confirmarEliminar");
+            };
+            window.solicitarConfirmacionEliminar = function () {
+                const id = document.getElementById("citaId").value;
+                itemAEliminar = { tipo: "cita", id };
+                const cita = datos.citas.find((c) => c.id === id);
+                const pac = datos.pacientes.find((p) => p.id === cita?.pacienteId);
+                document.getElementById("mensajeEliminar").textContent =
+                    `¿Eliminar la cita de "${pac?.nombre || "este paciente"}" del ${cita?.fecha}?`;
+                abrirModal("confirmarEliminar");
+            };
+            window.confirmarEliminacionDefinitiva = function () {
+                if (!itemAEliminar) return;
+                const { tipo, id } = itemAEliminar;
+                if (tipo === "cita") {
+                    datos.citas = datos.citas.filter((c) => c.id !== id);
+                    deleteCita(id);
+                    const pagosCita = datos.pagos.filter(p => p.citaId === id);
+                    pagosCita.forEach(p => deletePago(p.id));
+                    datos.pagos = datos.pagos.filter((p) => p.citaId !== id);
+                } else if (tipo === "paciente") {
+                    datos.pacientes = datos.pacientes.filter((p) => p.id !== id);
+                    deletePaciente(id);
+                } else if (tipo === "medico") {
+                    datos.medicos = datos.medicos.filter((m) => m.id !== id);
+                    deleteMedico(id);
+                }
+                itemAEliminar = null;
+                cerrarModales();
+                mostrarAlerta("Eliminado correctamente.", "exito");
+            };
+
+            window.exportarCSV = function () {
+                const esc = (v) => {
+                    if (v == null) return "";
+                    const s = String(v);
+                    return s.includes(",") || s.includes('"') ? '"' + s.replace(/"/g, '""') + '"' : s;
+                };
+                let csv = "TIPO,ID,FECHA_CITA,HORA,PACIENTE,MEDICO,PROCEDIMIENTO,ESTADO,MONTO,METODO,FECHA_PAGO\n";
+                datos.citas.forEach((c) => {
+                    if (!c) return;
+                    const pac = datos.pacientes.find((p) => p.id === c.pacienteId);
+                    const med = datos.medicos.find((m) => m.id === c.medicoId);
+                    const pago = datos.pagos.find((p) => p.citaId === c.id);
+                    csv +=
+                        [
+                            "Cita",
+                            c.id,
+                            c.fecha || "",
+                            c.hora || "",
+                            pac?.nombre || "",
+                            med?.nombre || "",
+                            labelProcedimiento(c.tipo),
+                            c.estado,
+                            c.monto || 0,
+                            c.metodoPago || "",
+                            pago ? pago.fecha || "" : ""
+                        ]
+                            .map(esc)
+                            .join(",") + "\n";
+                });
+                const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(blob);
+                a.download = "orthosmile_citas_" + getFechaLocal() + ".csv";
+                a.click();
+                mostrarAlerta("Datos exportados.", "exito");
+            };
+            // ── LOGO SPLASH + PROTECTOR DE PANTALLA ──
+            let _splashTimer = null;
+            let _splashModoProtector = false;
+            const SPLASH_INACTIVIDAD_MS = 10000; // 1 minuto recomendado
+
+            window.abrirLogoSplash = function(esProtector = false) {
+                const overlay = document.getElementById('logoSplashOverlay');
+                const nombre = document.getElementById('logoSplashNombre');
+                nombre.textContent = datos.config?.nombre || 'Ortho Smile SJR';
+                _splashModoProtector = esProtector;
+                overlay.classList.add('activo');
+                if (!esProtector) {
+                    setTimeout(() => cerrarLogoSplash(), 2800);
+                }
+            };
+
+            window.cerrarLogoSplash = function() {
+                const overlay = document.getElementById('logoSplashOverlay');
+                overlay.classList.remove('activo');
+                _splashModoProtector = false;
+                reiniciarTimerInactividad();
+            };
+
+            function reiniciarTimerInactividad() {
+                clearTimeout(_splashTimer);
+                _splashTimer = setTimeout(() => {
+                    const overlay = document.getElementById('logoSplashOverlay');
+                    if (!overlay.classList.contains('activo')) {
+                        abrirLogoSplash(true);
+                    }
+                }, SPLASH_INACTIVIDAD_MS);
+            }
+
+            // Detectar actividad para reiniciar timer (sin cerrar el protector)
+            ['mousemove','keydown','touchstart','scroll'].forEach(evt => {
+                document.addEventListener(evt, () => {
+                    if (!_splashModoProtector) {
+                        reiniciarTimerInactividad();
+                    }
+                }, { passive: true });
+            });
+
+            // Solo click o tap cierra el protector
+            ['mousedown','touchstart'].forEach(evt => {
+                document.addEventListener(evt, () => {
+                    if (_splashModoProtector) {
+                        cerrarLogoSplash();
+                    }
+                }, { passive: true });
+            });
+
+            // Iniciar el timer al cargar
+            reiniciarTimerInactividad();
+            // Fallback: si en 3 segundos no cargaron todos los listeners, renderizar igual
+                setTimeout(() => {
+                    const cal = document.getElementById('calendar');
+                    if (cal && (!calendarInstance || cal.children.length === 0)) {
+                        actualizarTodo();
+                    }
+                }, 3000);
+            window.toggleDarkMode = function () {
+                document.body.classList.toggle("dark-mode");
+                const isDark = document.body.classList.contains("dark-mode");
+                localStorage.setItem("darkMode", isDark);
+                document.getElementById("iconSun").style.display = isDark ? "none" : "block";
+                document.getElementById("iconMoon").style.display = isDark ? "block" : "none";
+            };
+
+            // ── SIDEBAR MOBILE ──
+            window.toggleSidebar = function () {
+                document.getElementById("sidebar").classList.toggle("open");
+                document.getElementById("sidebarOverlay").classList.toggle("open");
+            };
+            window.closeSidebar = function () {
+                document.getElementById("sidebar").classList.remove("open");
+                document.getElementById("sidebarOverlay").classList.remove("open");
+            };
+            window.scrollToCalendar = function () {
+                document.querySelector(".calendar-card")?.scrollIntoView({ behavior: "smooth" });
+            };
+
+            // ── RECEPCIONISTAS ──
+            let recepActual = null;
+
+            function iniciarSistemaRecepcionistas() {
+                const sesion = JSON.parse(localStorage.getItem("recep_sesion") || "null");
+                if (sesion && sesion.nombre) {
+                    recepActual = sesion;
+                    renderizarChipRecep();
+                } else {
+                    mostrarLoginRecep();
+                }
+            }
+            function mostrarLoginRecep() {
+                recepActual = null;
+                renderizarChipRecep();
+                document.getElementById("recepLoginOverlay").classList.add("visible");
+                mostrarVistaSeleccion();
+            }
+            function cerrarLoginRecep() {
+                document.getElementById("recepLoginOverlay").classList.remove("visible");
+            }
+            function mostrarVistaSeleccion() {
+                document.getElementById("recepVistaSeleccion").style.display = "block";
+                document.getElementById("recepVistaPassword").style.display = "none";
+                document.getElementById("recepVistaAdminLogin").style.display = "none";
+                renderizarListaRecep();
+            }
+            window.volverSeleccion = function () {
+                mostrarVistaSeleccion();
+            };
+            window.mostrarVistaAdmin = function () {
+                document.getElementById("recepVistaSeleccion").style.display = "none";
+                document.getElementById("recepVistaPassword").style.display = "none";
+                document.getElementById("recepVistaAdminLogin").style.display = "block";
+                document.getElementById("recepAdminPwdInput").value = "";
+                document.getElementById("recepAdminPwdError").style.display = "none";
+                setTimeout(() => document.getElementById("recepAdminPwdInput").focus(), 100);
+            };
+            window.confirmarAdminDesdeLogin = function () {
+                const val = document.getElementById("recepAdminPwdInput").value;
+                if (val === ADMIN_PASSWORD) {
+                    recepActual = { id: "admin", nombre: "Administrador", esAdmin: true };
+                    localStorage.setItem("recep_sesion", JSON.stringify(recepActual));
+                    cerrarLoginRecep();
+                    renderizarChipRecep();
+                    mostrarAlerta("Bienvenido, Administrador 🔐", "exito");
+                } else {
+                    document.getElementById("recepAdminPwdError").style.display = "block";
+                    document.getElementById("recepAdminPwdInput").value = "";
+                    document.getElementById("recepAdminPwdInput").focus();
+                }
+            };
+
+            let _recepPendiente = null;
+            function renderizarListaRecep() {
+                const lista = document.getElementById("recepLista");
+                if (!lista) return;
+                const receps = datos.admin?.recepcionistas || [];
+                if (receps.length === 0) {
+                    lista.innerHTML =
+                        '<p style="color:var(--text-3);font-size:0.85rem;text-align:center;padding:8px 0;">Aún no hay recepcionistas.<br>El admin puede agregarlos.</p>';
+                    return;
+                }
+                lista.innerHTML = receps
+                    .map(
+                        (r) =>
+                            `<button class="recep-btn" onclick="seleccionarRecepcionista('${r.id}')"><div class="recep-avatar">${r.nombre ? r.nombre.charAt(0).toUpperCase() : "R"}</div><div style="flex:1;text-align:left;"><div>${r.nombre || "Recepcionista"}</div>${r.password ? '<small style="color:var(--text-3);font-size:0.72rem;">🔒 Con contraseña</small>' : '<small style="color:var(--text-3);font-size:0.72rem;">Sin contraseña</small>'}</div><i class="ph-bold ph-arrow-right" style="color:var(--text-3);"></i></button>`
+                    )
+                    .join("");
+            }
+
+            window.seleccionarRecepcionista = function (id) {
+                const recep = datos.admin?.recepcionistas?.find((r) => r.id === id);
+                if (!recep) return mostrarAlerta("Recepcionista no encontrado.", "error");
+                const tienePassword = recep.password && recep.password.trim() !== "";
+                if (tienePassword) {
+                    _recepPendiente = recep;
+                    document.getElementById("recepVistaSeleccion").style.display = "none";
+                    document.getElementById("recepVistaPassword").style.display = "block";
+                    document.getElementById("recepVistaAdminLogin").style.display = "none";
+                    document.getElementById("recepPwdNombre").textContent = recep.nombre || "";
+                    document.getElementById("recepPwdInput").value = "";
+                    document.getElementById("recepPwdError").style.display = "none";
+                    setTimeout(() => document.getElementById("recepPwdInput").focus(), 100);
+                } else {
+                    entrarComoRecepcionista(recep.id, recep.nombre);
+                }
+            };
+            window.confirmarPasswordRecep = function () {
+                if (!_recepPendiente) return;
+                const val = document.getElementById("recepPwdInput").value;
+                const recepFresh = datos.admin?.recepcionistas?.find((r) => r.id === _recepPendiente.id);
+                const passwordCorrecta = recepFresh?.password || _recepPendiente.password;
+                if (val === passwordCorrecta) {
+                    entrarComoRecepcionista(_recepPendiente.id, _recepPendiente.nombre);
+                    _recepPendiente = null;
+                } else {
+                    document.getElementById("recepPwdError").style.display = "block";
+                    document.getElementById("recepPwdInput").value = "";
+                    document.getElementById("recepPwdInput").focus();
+                }
+            };
+            window.entrarComoRecepcionista = function (id, nombre) {
+                recepActual = { id, nombre };
+                localStorage.setItem("recep_sesion", JSON.stringify(recepActual));
+                cerrarLoginRecep();
+                renderizarChipRecep();
+                mostrarAlerta(`Bienvenida/o, ${nombre} 👋`, "exito");
+            };
+            window.cerrarSesionRecep = function () {
+                recepActual = null;
+                localStorage.removeItem("recep_sesion");
+                renderizarChipRecep();
+                mostrarLoginRecep();
+            };
+
+            function renderizarChipRecep() {
+                const c = document.getElementById("recepChipContainer");
+                if (!c) return;
+                if (recepActual) {
+                    const esAdmin = recepActual.esAdmin;
+                    c.innerHTML = `<div class="recep-chip" style="${esAdmin ? "border-color:#6366f1;color:#6366f1;background:color-mix(in srgb,#6366f1 10%,transparent);" : ""}"><div class="avatar-sm" style="${esAdmin ? "background:#6366f1;" : ""}">${recepActual.nombre ? recepActual.nombre.charAt(0).toUpperCase() : "R"}</div>${recepActual.nombre || ""}<button class="btn-salir" onclick="cerrarSesionRecep()" title="Cerrar sesión"><i class="ph-bold ph-sign-out"></i></button></div>`;
+                } else {
+                    c.innerHTML = `<button class="btn btn-ghost btn-sm" onclick="mostrarLoginRecep()" style="gap:6px;"><i class="ph-bold ph-identification-badge"></i>Iniciar turno</button>`;
+                }
+            }
+
+            window.cerrarTurnoRecepcionista = function () {
+                if (!recepActual) return;
+                const nombre = recepActual.nombre;
+                cerrarModales();
+                recepActual = null;
+                localStorage.removeItem("recep_sesion");
+                renderizarChipRecep();
+                mostrarAlerta(`Turno cerrado. ¡Hasta luego, ${nombre}! 👋`, "exito");
+                setTimeout(() => window.location.reload(), 1200);
+            };
+            window.agregarRecepcionistaAdmin = function () {
+                const nombre = document.getElementById("newRecepNombre").value.trim();
+                const password = document.getElementById("newRecepPassword").value.trim();
+                if (!nombre) return mostrarAlerta("Escribe el nombre.", "error");
+                if (!password) return mostrarAlerta("La contraseña es obligatoria.", "error");
+                if (!datos.admin.recepcionistas) datos.admin.recepcionistas = [];
+                if (
+                    datos.admin.recepcionistas.find(
+                        (r) => r && r.nombre && r.nombre.toLowerCase() === nombre.toLowerCase()
+                    )
+                )
+                    return mostrarAlerta("Ya existe ese recepcionista.", "error");
+                datos.admin.recepcionistas.push({ id: "r-" + Date.now(), nombre, password });
+                document.getElementById("newRecepNombre").value = "";
+                document.getElementById("newRecepPassword").value = "";
+                saveAdmin();
+                renderAdminRecepcionistas();
+                mostrarAlerta(`Recepcionista "${nombre}" agregada.`, "exito");
+            };
+
+            function renderAdminRecepcionistas() {
+                const c = document.getElementById("adminRecepcionistasContainer");
+                if (!c) return;
+                const lista = datos.admin?.recepcionistas || [];
+                c.innerHTML =
+                    lista.length === 0
+                        ? '<p style="color:var(--text-3);">No hay recepcionistas registrados.</p>'
+                        : lista
+                              .map((r, i) => {
+                                  if (!r) return "";
+                                  return `<div class="categoria-item" style="flex-wrap:wrap;gap:6px;"><div style="width:32px;height:32px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;flex-shrink:0;">${r.nombre ? r.nombre.charAt(0).toUpperCase() : "R"}</div><input type="text" class="cat-label" value="${r.nombre || ""}" placeholder="Nombre" style="min-width:100px;" onchange="if(datos.admin.recepcionistas[${i}])datos.admin.recepcionistas[${i}].nombre=this.value"><input type="password" value="${r.password || ""}" placeholder="Contraseña" style="width:130px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:6px 10px;font-size:0.85rem;color:var(--text-1);" onchange="if(datos.admin.recepcionistas[${i}])datos.admin.recepcionistas[${i}].password=this.value"><button class="btn-del" onclick="eliminarRecepcionista(${i})"><i class="ph-bold ph-trash"></i></button></div>`;
+                              })
+                              .join("");
+            }
+            window.eliminarRecepcionista = function (i) {
+                datos.admin.recepcionistas.splice(i, 1);
+                renderAdminRecepcionistas();
+            };
+
+            // ── CSV CORTE ──
+            let _ultimoCorteData = null;
+            window.descargarCorteCSV = function () {
+                if (!_ultimoCorteData) return;
+                const d = _ultimoCorteData;
+                const esc = (v) => {
+                    const s = String(v != null ? v : "");
+                    return s.includes(",") || s.includes('"') ? '"' + s.replace(/"/g, '""') + '"' : s;
+                };
+                let csv = "CORTE DE CAJA\n";
+                csv +=
+                    "Consultorio," +
+                    esc(d.consultorio) +
+                    "\n" +
+                    "Recepcionista," +
+                    esc(d.recepcionista) +
+                    "\n" +
+                    "Período," +
+                    esc(d.desde) +
+                    " a " +
+                    esc(d.hasta) +
+                    "\n" +
+                    "Generado," +
+                    esc(new Date(d.fecha).toLocaleString("es-MX")) +
+                    "\n\n";
+                csv += "RESUMEN\n";
+                csv +=
+                    "Total citas," +
+                    d.citasPeriodo +
+                    "\nCon cobro," +
+                    d.citasConPago +
+                    "\nPendientes," +
+                    d.citasPendientes +
+                    "\nCanceladas," +
+                    d.citasCanceladas +
+                    "\n\n";
+                csv += "MOVIMIENTOS DE CAJA\n";
+                csv +=
+                    "Efectivo,$" +
+                    d.porMetodo.efectivo.toFixed(2) +
+                    "\nTarjeta,$" +
+                    d.porMetodo.tarjeta.toFixed(2) +
+                    "\nTransferencia,$" +
+                    d.porMetodo.transferencia.toFixed(2) +
+                    "\n";
+                if (d.porMetodo.ajuste !== 0) csv += "Ajustes,$" + d.porMetodo.ajuste.toFixed(2) + "\n";
+                if (d.porMetodo.devolucion !== 0)
+                    csv += "Devoluciones,-$" + Math.abs(d.porMetodo.devolucion).toFixed(2) + "\n";
+                csv +=
+                    "Subtotal,$" +
+                    d.subtotal.toFixed(2) +
+                    "\nIVA (" +
+                    d.ivaPorcentaje +
+                    "%),$" +
+                    d.ivaMonto.toFixed(2) +
+                    "\nTOTAL NETO,$" +
+                    d.totalNeto.toFixed(2) +
+                    "\n\n";
+                csv += "DETALLE DE TRANSACCIONES\nFecha,Paciente,Notas,Monto,Método,Dentista\n";
+                d.pagos.forEach((p) => {
+                    if (!p) return;
+                    const med = datos.medicos.find((m) => m.id === p.medicoId);
+                    const displayNotas = p.notes || labelProcedimiento(p.servicio) || p.notas || "";
+                    csv +=
+                        [
+                            p.fecha || "",
+                            p.pacienteNombre || "",
+                            displayNotas,
+                            "$" + (p.monto || 0).toFixed(2),
+                            p.metodo || "efectivo",
+                            med?.nombre || "—"
+                        ]
+                            .map(esc)
+                            .join(",") + "\n";
+                });
+                const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(blob);
+                a.download = "corte_" + d.desde + "_" + d.hasta + ".csv";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(a.href);
+            };
+
+            // ── FIREBASE ADMIN ──
+            window.cambiarFirebaseTab = function (modo, btn) {
+                document.getElementById("fbPanelPegar").style.display = modo === "pegar" ? "block" : "none";
+                document.getElementById("fbPanelArchivo").style.display = modo === "archivo" ? "block" : "none";
+                document.querySelectorAll("#adminTab-firebase .tab-btn").forEach((b) => b.classList.remove("activo"));
+                btn.classList.add("activo");
+            };
+            window.cargarArchivoFirebase = function (event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                document.getElementById("fbArchivoNombre").textContent = "📄 " + file.name;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById("adminFirebaseInputArchivo").value = e.target.result;
+                };
+                reader.readAsText(file);
+            };
+            window.guardarFirebaseDesdeAdmin = function () {
+                const archivoVisible = document.getElementById("fbPanelArchivo").style.display !== "none";
+                const rawVal = archivoVisible
+                    ? document.getElementById("adminFirebaseInputArchivo").value
+                    : document.getElementById("adminFirebaseInput").value;
+                if (!rawVal.trim()) return mostrarAlerta("Ingresa la configuración.", "error");
+                try {
+                    const match = rawVal.match(/\{[\s\S]*\}/);
+                    if (!match) throw new Error("No se encontró JSON válido.");
+                    const parsed = JSON.parse(match[0]);
+                    if (!parsed.apiKey) throw new Error("Falta apiKey.");
+                    localStorage.setItem("consultorio_firebase_config", JSON.stringify(parsed));
+                    mostrarAlerta("Firebase reconfigurado. Recargando...", "exito");
+                    setTimeout(() => window.location.reload(), 1500);
+                } catch (err) {
+                    mostrarAlerta(`Config inválida: ${err.message}`, "error");
+                }
+            };
+            function renderAdminFirebase() {
+                const el = document.getElementById("fbEstadoActual");
+                if (el)
+                    el.innerHTML = `<strong>Conectado a:</strong> ${firebaseConfig?.projectId || "—"}<br><small>App ID: ${appId}</small>`;
+            }
+            // ── BÚSQUEDA GLOBAL ──
+            window.busquedaGlobal = function (q) {
+                const dd = document.getElementById("globalSearchDropdown");
+                const query = q.trim().toLowerCase();
+                if (query.length < 2) {
+                    dd.style.display = "none";
+                    return;
+                }
+                const resPacientes = datos.pacientes
+                    .filter((p) => p && p.nombre && p.nombre.toLowerCase().includes(query))
+                    .slice(0, 4);
+                const resCitas = datos.citas
+                    .filter((c) => {
+                        if (!c) return false;
+                        const pac = datos.pacientes.find((p) => p.id === c.pacienteId);
+                        return pac && pac.nombre.toLowerCase().includes(query);
+                    })
+                    .slice(0, 3);
+                const resPagos = datos.pagos
+                    .filter((p) => p && (p.pacienteNombre || "").toLowerCase().includes(query))
+                    .slice(0, 3);
+                let html = "";
+                if (resPacientes.length > 0) {
+                    html += `<div class="gsearch-section">Pacientes</div>`;
+                    html += resPacientes
+                        .map(
+                            (p) => `
+                    <div class="gsearch-item" onclick="abrirExpediente('${p.id}');cerrarBusquedaGlobal();">
+                        <div class="gsearch-icon" style="background:#e0f2fe;color:#0891b2;"><i class="ph-bold ph-user"></i></div>
+                        <div><div class="gsearch-main">${p.nombre}</div><div class="gsearch-sub">${p.telefono || "Sin teléfono"}</div></div>
+                    </div>`
+                        )
+                        .join("");
+                }
+                if (resCitas.length > 0) {
+                    html += `<div class="gsearch-section">Citas</div>`;
+                    html += resCitas
+                        .map((c) => {
+                            const pac = datos.pacientes.find((p) => p.id === c.pacienteId);
+                            return `<div class="gsearch-item" onclick="verDetallesCita('${c.id}');cerrarBusquedaGlobal();">
+                        <div class="gsearch-icon" style="background:#ede9fe;color:#7c3aed;"><i class="ph-bold ph-calendar"></i></div>
+                        <div><div class="gsearch-main">${pac ? pac.nombre : ""}</div><div class="gsearch-sub">${c.fecha || ""} · ${labelProcedimiento(c.tipo)}</div></div>
+                    </div>`;
+                        })
+                        .join("");
+                }
+                if (resPagos.length > 0) {
+                    html += `<div class="gsearch-section">Pagos</div>`;
+                    html += resPagos
+                        .map(
+                            (p) => `
+                    <div class="gsearch-item" onclick="cerrarBusquedaGlobal();">
+                        <div class="gsearch-icon" style="background:#d1fae5;color:#059669;"><i class="ph-bold ph-currency-dollar"></i></div>
+                        <div><div class="gsearch-main">${p.pacienteNombre || ""}</div><div class="gsearch-sub">${p.fecha || ""} · $${(p.monto || 0).toFixed(2)} · ${p.metodo || ""}</div></div>
+                    </div>`
+                        )
+                        .join("");
+                }
+                if (!html)
+                    html = `<div style="padding:16px;text-align:center;color:var(--text-3);font-size:0.85rem;">Sin resultados para "${q}"</div>`;
+                dd.innerHTML = html;
+                dd.style.display = "block";
+            };
+            window.mostrarResultadosGlobal = function () {
+                const q = document.getElementById("globalSearchInput").value;
+                if (q.trim().length >= 2) busquedaGlobal(q);
+            };
+            window.cerrarBusquedaGlobal = function () {
+                document.getElementById("globalSearchDropdown").style.display = "none";
+                document.getElementById("globalSearchInput").value = "";
+            };
+            document.addEventListener("click", function (e) {
+                if (!e.target.closest("#globalSearchWrap")) {
+                    const dd = document.getElementById("globalSearchDropdown");
+                    if (dd) dd.style.display = "none";
+                }
+            });
+
+            // ── EXPEDIENTE CLÍNICO ──
+            let expTabActual = "historial";
+            window.abrirExpediente = function (pacienteId) {
+                const pac = datos.pacientes.find((p) => p.id === pacienteId);
+                if (!pac) return;
+                document.getElementById("expTitulo").textContent = pac.nombre;
+                expTabActual = "historial";
+                renderExpediente(pacienteId);
+                abrirModal("expedientePaciente");
+            };
+            function renderExpediente(pacienteId) {
+                const pac = datos.pacientes.find((p) => p.id === pacienteId);
+                if (!pac) return;
+                const citasPac = datos.citas
+                    .filter((c) => c && c.pacienteId === pacienteId)
+                    .sort((a, b) => (b.fecha || "").localeCompare(a.fecha || ""));
+                const pagosPac = datos.pagos.filter((p) => p && p.pacienteId === pacienteId && p.monto > 0);
+                const totalPagado = pagosPac.reduce((s, p) => s + (p.monto || 0), 0);
+                const edad = pac.nacimiento ? calcularEdad(pac.nacimiento) + " años" : "N/D";
+                const odontograma = pac.odontograma || {};
+                const estadosDiente = ["sano", "caries", "tratado", "extraccion", "corona"];
+                const labelsDiente = { sano: "✓", caries: "C", tratado: "T", extraccion: "X", corona: "♛" };
+                document.getElementById("expContenido").innerHTML = `
+                <div style="display:flex;align-items:center;gap:14px;background:var(--surface2);border-radius:var(--radius);padding:14px;margin-bottom:14px;border:1px solid var(--border);">
+                    <div style="width:48px;height:48px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:800;flex-shrink:0;">${pac.nombre.charAt(0).toUpperCase()}</div>
+                    <div style="flex:1;">
+                        <div style="font-weight:700;font-size:1rem;color:var(--text-1);">${pac.nombre}</div>
+                        <div style="font-size:0.78rem;color:var(--text-2);margin-top:2px;">${edad} · ${pac.genero || ""} ${pac.telefono ? "· " + pac.telefono : ""} ${pac.email ? "· " + pac.email : ""}</div>
+                        ${pac.notas ? `<div style="font-size:0.75rem;color:var(--accent);margin-top:4px;">⚠️ ${pac.notas}</div>` : ""}
+                    </div>
+                    <div style="text-align:right;flex-shrink:0;">
+                        <div style="font-size:0.7rem;color:var(--text-3);text-transform:uppercase;font-weight:700;">Total pagado</div>
+                        <div style="font-size:1.1rem;font-weight:800;color:var(--secondary);">$${totalPagado.toFixed(2)}</div>
+                        <div style="font-size:0.7rem;color:var(--text-3);">${citasPac.length} citas</div>
+                    </div>
+                </div>
+                <div class="exp-tabs">
+                    <button class="exp-tab ${expTabActual === "historial" ? "activo" : ""}" onclick="cambiarExpTab('historial','${pacienteId}',this)">📋 Historial</button>
+                    <button class="exp-tab ${expTabActual === "pagos" ? "activo" : ""}" onclick="cambiarExpTab('pagos','${pacienteId}',this)">💰 Pagos</button>
+                    <button class="exp-tab ${expTabActual === "odontograma" ? "activo" : ""}" onclick="cambiarExpTab('odontograma','${pacienteId}',this)">🦷 Odontograma</button>
+                    <button class="exp-tab ${expTabActual === "notas" ? "activo" : ""}" onclick="cambiarExpTab('notas','${pacienteId}',this)">📝 Notas</button>
+                </div>
+                <div id="expTabContenido">${renderExpTab(expTabActual, pacienteId)}</div>
+            `;
+            }
+            function renderExpTab(tab, pacienteId) {
+                const pac = datos.pacientes.find((p) => p.id === pacienteId);
+                const citasPac = datos.citas
+                    .filter((c) => c && c.pacienteId === pacienteId)
+                    .sort((a, b) => (b.fecha || "").localeCompare(a.fecha || ""));
+                const pagosPac = datos.pagos
+                    .filter((p) => p && p.pacienteId === pacienteId)
+                    .sort((a, b) => (b.fecha || "").localeCompare(a.fecha || ""));
+                const odontograma = pac.odontograma || {};
+                if (tab === "historial") {
+                    if (citasPac.length === 0) return `<div class="empty-state">Sin citas registradas.</div>`;
+                    return citasPac
+                        .map((c) => {
+                            const med = datos.medicos.find((m) => m.id === c.medicoId);
+                            const pago = datos.pagos.find((p) => p.citaId === c.id && p.monto > 0);
+                            return `<div class="detail-card" style="cursor:pointer;" onclick="cerrarModales();setTimeout(()=>verDetallesCita('${c.id}'),150);">
+                        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
+                            <div>
+                                <div style="font-weight:700;font-size:0.875rem;color:var(--text-1);">${c.fecha || ""} ${c.hora || ""}</div>
+                                <div style="font-size:0.78rem;color:var(--text-2);margin-top:2px;">${labelProcedimiento(c.tipo)}${med ? " · " + med.nombre : ""}</div>
+                                ${c.motivo ? `<div style="font-size:0.75rem;color:var(--text-3);margin-top:2px;">${c.motivo}</div>` : ""}
+                            </div>
+                            <div style="text-align:right;">
+                                <span class="status-${c.estado}" style="font-size:0.75rem;">${c.estado}</span>
+                                ${pago ? `<div style="font-size:0.82rem;font-weight:700;color:var(--secondary);">$${pago.monto.toFixed(2)}</div>` : ""}
+                            </div>
+                        </div>
+                    </div>`;
+                        })
+                        .join("");
+                }
+                if (tab === "pagos") {
+                    const pagosSolo = pagosPac.filter((p) => p.monto > 0);
+                    if (pagosSolo.length === 0) return `<div class="empty-state">Sin pagos registrados.</div>`;
+                    const total = pagosSolo.reduce((s, p) => s + (p.monto || 0), 0);
+                    return (
+                        `<div style="text-align:right;margin-bottom:10px;font-weight:700;color:var(--secondary);">Total: $${total.toFixed(2)}</div>` +
+                        pagosSolo
+                            .map(
+                                (p) => `
+                    <div class="detail-card">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <div>
+                                <div style="font-weight:600;font-size:0.875rem;">${p.fecha || ""}</div>
+                                <div style="font-size:0.78rem;color:var(--text-2);">${p.pacienteNombre || ""}</div>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-weight:700;color:var(--secondary);">$${p.monto.toFixed(2)}</div>
+                                <span class="tag tag-${p.metodo || "efectivo"}" style="font-size:0.68rem;">${p.metodo || ""}</span>
+                            </div>
+                        </div>
+                    </div>`
+                            )
+                            .join("")
+                    );
+                }
+                if (tab === "odontograma") {
+                    const dientes = [
+                        [18, 17, 16, 15, 14, 13, 12, 11],
+                        [21, 22, 23, 24, 25, 26, 27, 28],
+                        [48, 47, 46, 45, 44, 43, 42, 41],
+                        [31, 32, 33, 34, 35, 36, 37, 38]
+                    ];
+                    const estadoLabels = { sano: "✓", caries: "C", tratado: "T", extraccion: "X", corona: "♛" };
+                    return `<p style="font-size:0.78rem;color:var(--text-2);margin-bottom:10px;">Haz clic en un diente para cambiar su estado.</p>
+                    <div style="display:grid;gap:6px;">
+                        ${dientes
+                            .map(
+                                (fila, fi) => `
+                            <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:4px;${fi === 1 ? "margin-bottom:8px;" : ""}${fi === 2 ? "margin-top:2px;" : ""}">
+                                ${fila
+                                    .map((num) => {
+                                        const est = odontograma[num] || "sano";
+                                        return `<div class="diente ${est}" onclick="ciclarDiente('${pacienteId}',${num})" title="Diente ${num}">
+                                        <div style="font-size:0.6rem;color:var(--text-3);">${num}</div>
+                                        <div style="font-size:0.75rem;font-weight:700;">${estadoLabels[est] || "✓"}</div>
+                                    </div>`;
+                                    })
+                                    .join("")}
+                            </div>`
+                            )
+                            .join("")}
+                    </div>
+                    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;font-size:0.72rem;">
+                        <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--surface2);border:1px solid var(--border);display:inline-block;"></span>Sano</span>
+                        <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#fef3c7;border:1px solid #f59e0b;display:inline-block;"></span>Caries</span>
+                        <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#d1fae5;border:1px solid #10b981;display:inline-block;"></span>Tratado</span>
+                        <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#fee2e2;border:1px solid #ef4444;display:inline-block;"></span>Extracción</span>
+                        <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#ede9fe;border:1px solid #7c3aed;display:inline-block;"></span>Corona</span>
+                    </div>`;
+                }
+                if (tab === "notas") {
+                    return `<label>Notas Clínicas Internas (solo visible para el equipo)</label>
+                    <textarea id="expNotasInput" rows="5" placeholder="Alergias, observaciones, tratamiento activo...">${pac.notasClinicas || ""}</textarea>
+                    <div style="text-align:right;margin-top:10px;">
+                        <button class="btn btn-primary btn-sm" onclick="guardarNotasClinicas('${pacienteId}')"><i class="ph-bold ph-floppy-disk"></i>Guardar Notas</button>
+                    </div>`;
+                }
+                return "";
+            }
+            window.cambiarExpTab = function (tab, pacienteId, btn) {
+                expTabActual = tab;
+                document.querySelectorAll(".exp-tab").forEach((b) => b.classList.remove("activo"));
+                btn.classList.add("activo");
+                document.getElementById("expTabContenido").innerHTML = renderExpTab(tab, pacienteId);
+            };
+            window.ciclarDiente = function (pacienteId, num) {
+                const pac = datos.pacientes.find((p) => p.id === pacienteId);
+                if (!pac) return;
+                if (!pac.odontograma) pac.odontograma = {};
+                const estados = ["sano", "caries", "tratado", "extraccion", "corona"];
+                const actual = pac.odontograma[num] || "sano";
+                const siguiente = estados[(estados.indexOf(actual) + 1) % estados.length];
+                pac.odontograma[num] = siguiente;
+                savePaciente(pac);
+                document.getElementById("expTabContenido").innerHTML = renderExpTab("odontograma", pacienteId);
+            };
+            window.guardarNotasClinicas = function (pacienteId) {
+                const pac = datos.pacientes.find((p) => p.id === pacienteId);
+                if (!pac) return;
+                pac.notasClinicas = document.getElementById("expNotasInput").value;
+                savePaciente(pac);
+                mostrarAlerta("Notas clínicas guardadas.", "exito");
+            };
+
+            // ── CONFIRMACIÓN DE CITAS ──
+            window.toggleConfirmacionCita = function (citaId) {
+                const cita = datos.citas.find((c) => c.id === citaId);
+                if (!cita) return;
+                cita.confirmada = !cita.confirmada;
+                saveCita(cita);
+            };
+
+            // ── CUMPLEAÑOS ──
+            function actualizarCumpleanios() {
+                const hoy = new Date();
+                const hoyMes = hoy.getMonth() + 1;
+                const hoyDia = hoy.getDate();
+                const cumpleHoy = [];
+                const cumpleSemana = [];
+                datos.pacientes.forEach((p) => {
+                    if (!p || !p.nacimiento) return;
+                    const nac = new Date(p.nacimiento + "T00:00:00");
+                    if (isNaN(nac)) return;
+                    const mes = nac.getMonth() + 1;
+                    const dia = nac.getDate();
+                    const edad = hoy.getFullYear() - nac.getFullYear();
+                    if (mes === hoyMes && dia === hoyDia) {
+                        cumpleHoy.push({ ...p, edad });
+                    } else {
+                        const cumpleEsteAnio = new Date(hoy.getFullYear(), mes - 1, dia);
+                        const diff = (cumpleEsteAnio - hoy) / (1000 * 60 * 60 * 24);
+                        if (diff > 0 && diff <= 7) cumpleSemana.push({ ...p, edad, diasFaltan: Math.ceil(diff) });
+                    }
+                });
+                const seccion = document.getElementById("seccionCumpleanios");
+                const cont = document.getElementById("cumpleaniosContainer");
+                if (!seccion || !cont) return;
+                if (cumpleHoy.length === 0 && cumpleSemana.length === 0) {
+                    seccion.style.display = "none";
+                    return;
+                }
+                seccion.style.display = "block";
+                let html = "";
+                cumpleHoy.forEach((p) => {
+                    html += `<div class="cumple-item" onclick="abrirExpediente('${p.id}')">
+                    <div class="cumple-nombre">🎂 ${p.nombre}</div>
+                    <div class="cumple-detalle">¡Hoy cumple ${p.edad} años! ${p.telefono ? "· " + p.telefono : ""}</div>
+                </div>`;
+                });
+                cumpleSemana.forEach((p) => {
+                    html += `<div class="cumple-item" style="background:var(--surface2);border-color:var(--border);" onclick="abrirExpediente('${p.id}')">
+                    <div class="cumple-nombre" style="color:var(--text-1);">🎁 ${p.nombre}</div>
+                    <div class="cumple-detalle" style="color:var(--text-2);">En ${p.diasFaltan} día${p.diasFaltan > 1 ? "s" : ""} · ${p.edad} años</div>
+                </div>`;
+                });
+                cont.innerHTML = html;
+            }
+            // ── BACKUP / RESTORE / BORRAR ──
+            window.exportarBaseDatosJSON = function () {
+                const backup = {
+                    exportadoEn: new Date().toISOString(),
+                    version: "1.2",
+                    consultorio: datos.config?.nombre || "Ortho Smile SJR",
+                    pacientes: datos.pacientes,
+                    medicos: datos.medicos,
+                    citas: datos.citas,
+                    pagos: datos.pagos,
+                    config: datos.config,
+                    admin: datos.admin
+                };
+                const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json;charset=utf-8;" });
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(blob);
+                a.download = `axocitas_backup_${getFechaLocal()}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(a.href);
+                mostrarAlerta("Respaldo descargado correctamente.", "exito");
+            };
+
+            let _importarJsonData = null;
+            window.previewImportarJSON = function (file) {
+                if (!file) return;
+                document.getElementById("importarJsonNombre").textContent = "📄 " + file.name;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const parsed = JSON.parse(e.target.result);
+                        _importarJsonData = parsed;
+                        const preview = document.getElementById("importarJsonPreview");
+                        preview.style.display = "block";
+                        preview.innerHTML = `
+                            <strong>Archivo válido ✅</strong><br>
+                            Exportado: ${parsed.exportadoEn ? new Date(parsed.exportadoEn).toLocaleString("es-MX") : "Desconocido"}<br>
+                            Consultorio: ${parsed.consultorio || "N/D"}<br>
+                            Pacientes: ${parsed.pacientes?.length || 0} &nbsp;·&nbsp;
+                            Citas: ${parsed.citas?.length || 0} &nbsp;·&nbsp;
+                            Pagos: ${parsed.pagos?.length || 0} &nbsp;·&nbsp;
+                            Médicos: ${parsed.medicos?.length || 0}
+                        `;
+                        document.getElementById("importarJsonBtn").style.display = "block";
+                    } catch (err) {
+                        document.getElementById("importarJsonPreview").style.display = "block";
+                        document.getElementById("importarJsonPreview").innerHTML = `<span style="color:var(--danger);">❌ Archivo inválido: ${err.message}</span>`;
+                        document.getElementById("importarJsonBtn").style.display = "none";
+                        _importarJsonData = null;
+                    }
+                };
+                reader.readAsText(file);
+            };
+
+            window.confirmarImportarJSON = async function () {
+                if (!_importarJsonData) return;
+                if (!confirm("¿Seguro que deseas importar estos datos? Los datos actuales serán reemplazados.")) return;
+                mostrarAlerta("Importando datos...", "warning");
+                try {
+                    const d = _importarJsonData;
+                    if (d.config) { datos.config = d.config; await saveConfig(); }
+                    if (d.admin) { datos.admin = d.admin; await saveAdmin(); }
+                    const pacs = d.pacientes || [];
+                    const meds = d.medicos || [];
+                    const citas = d.citas || [];
+                    const pagos = d.pagos || [];
+                    for (const p of pacs) if (p?.id) await savePaciente(p);
+                    for (const m of meds) if (m?.id) await saveMedico(m);
+                    for (const c of citas) if (c?.id) await saveCita(c);
+                    for (const p of pagos) if (p?.id) await savePago(p);
+                    mostrarAlerta(`Importación completada: ${pacs.length} pacientes, ${citas.length} citas, ${pagos.length} pagos.`, "exito");
+                    _importarJsonData = null;
+                    document.getElementById("importarJsonBtn").style.display = "none";
+                    document.getElementById("importarJsonPreview").style.display = "none";
+                    document.getElementById("importarJsonNombre").textContent = "";
+                } catch (err) {
+                    mostrarAlerta(`Error al importar: ${err.message}`, "error");
+                }
+            };
+
+            window.borrarTodaLaBaseDeDatos = async function () {
+                const confirmInput = document.getElementById("confirmBorrarInput").value.trim();
+                if (confirmInput !== "BORRAR TODO") {
+                    return mostrarAlerta('Debes escribir "BORRAR TODO" para confirmar.', "error");
+                }
+                if (!confirm("⚠️ ÚLTIMA ADVERTENCIA: Esto borrará TODOS los datos permanentemente. ¿Continuar?")) return;
+                mostrarAlerta("Borrando datos...", "warning");
+                try {
+                    for (const p of [...datos.pacientes]) await deletePaciente(p.id);
+                    for (const m of [...datos.medicos]) await deleteMedico(m.id);
+                    for (const c of [...datos.citas]) await deleteCita(c.id);
+                    for (const p of [...datos.pagos]) await deletePago(p.id);
+                    datos.pacientes = [];
+                    datos.medicos = [];
+                    datos.citas = [];
+                    datos.pagos = [];
+                    document.getElementById("confirmBorrarInput").value = "";
+                    mostrarAlerta("Base de datos borrada completamente.", "exito");
+                } catch (err) {
+                    mostrarAlerta(`Error al borrar: ${err.message}`, "error");
+                }
+            };
+
+            // ── MAIN UPDATE ──
+            window.actualizarTodo = function () {
+                inicializarCalendario();
+                actualizarDashboard();
+                actualizarPanelAlertas();
+                actualizarCumpleanios();
+                actualizarFiltroMedico();
+                filtrarDatos();
+                if (!window._recepInicializado) {
+                    window._recepInicializado = true;
+                    iniciarSistemaRecepcionistas();
+                }
+            };
+
+            window.cerrarModales = function () {
+                document.querySelectorAll(".modal").forEach((m) => (m.style.display = "none"));
+                document.getElementById("modalFondo").style.display = "none";
+                citaEditando = null;
+                itemAEliminar = null;
+            };
+
+            window.abrirModal = function (id) {
+                const modal = document.getElementById(id);
+                if (!modal) return;
+                if (id === "focusPacientes") renderizarListaPacientes();
+                if (id === "nuevaCita") {
+                    cargarSelectsPacienteMedico();
+                    if (!citaEditando) {
+                        document.getElementById("tituloCita").textContent = "Nueva Cita";
+                        document.getElementById("citaId").value = "";
+                        if (!document.getElementById("fechaCita").value)
+                            document.getElementById("fechaCita").value = getFechaLocal();
+                        document.getElementById("horaCita").value = "";
+                        document.getElementById("medicoCita").value = "";
+                        document.getElementById("tipoCita").selectedIndex = 0;
+                        document.getElementById("estadoCita").selectedIndex = 0;
+                        document.getElementById("montoCita").value = datos.config?.tarifa || "";
+                        document.getElementById("metodoPago").value = "pendiente";
+                        document.getElementById("motivoCita").value = "";
+                        document.getElementById("recordatorioCita").value = "1dia";
+                        document.getElementById("seccionWhatsapp").style.display = "none";
+                        document.getElementById("eliminarCitaContainer").style.display = "none";
+                        document.getElementById("alertaEspecialidad").style.display = "none";
+                    }
+                }
+                if (id === "configConsultorio") {
+                    document.getElementById("configNombreConsultorio").value = datos.config?.nombre || "";
+                    document.getElementById("configDireccion").value = datos.config?.direccion || "";
+                    document.getElementById("configTelefono").value = datos.config?.telefono || "";
+                    document.getElementById("configTarifa").value = datos.config?.tarifa || 500;
+                }
+                if (id === "informeMensual") {
+                    const hoy = getFechaLocal();
+                    const partes = hoy.split("-");
+                    if (partes.length === 3) {
+                        document.getElementById("informeMes").value = partes[1];
+                        document.getElementById("informeAnio").value = partes[0];
+                    }
+                }
+                if (id === "corteCaja") {
+                    const hoy = getFechaLocal();
+                    document.getElementById("corteDesde").value = hoy;
+                    document.getElementById("corteHasta").value = hoy;
+                    const recepEl = document.getElementById("corteRecepNombre");
+                    if (recepEl) recepEl.textContent = recepActual?.nombre || "No registrado";
+                    const csvBtn = document.getElementById("btnDescargarCSV");
+                    const turnoBtn = document.getElementById("btnCerrarTurno");
+                    if (csvBtn) csvBtn.style.display = "none";
+                    if (turnoBtn) turnoBtn.style.display = "none";
+                    _ultimoCorteData = null;
+                    calcularCorte();
+                }
+                modal.style.display = "block";
+                document.getElementById("modalFondo").style.display = "block";
+            };
+
+            window.mostrarAlerta = function (msg, tipo = "normal") {
+                const el = document.createElement("div");
+                const colores = { exito: "#10b981", error: "#ef4444", warning: "#f59e0b" };
+                el.className = "toast";
+                el.style.background = colores[tipo] || "#475569";
+                el.innerHTML = `<i class="ph-bold ${tipo === "exito" ? "ph-check-circle" : tipo === "error" ? "ph-x-circle" : "ph-info"}" style="font-size:1.1rem;flex-shrink:0;"></i>${msg}`;
+                document.body.appendChild(el);
+                setTimeout(() => {
+                    el.style.opacity = "0";
+                    el.style.transition = "opacity 0.3s";
+                    setTimeout(() => el.remove(), 300);
+                }, 3500);
+            };
+
+            window.abrirModalNuevoIngreso = function () {
+                document.getElementById("nuevoIngresoPaciente").value = "";
+                document.getElementById("buscadorNuevoIngresoInput").value = "";
+                document.getElementById("buscadorNuevoIngresoSeleccionado").classList.remove("visible");
+                document.getElementById("buscadorNuevoIngresoDropdown").style.display = "none";
+                document.getElementById("nuevoIngresoConcepto").value = "";
+                document.getElementById("nuevoIngresoMonto").value = "";
+                document.getElementById("nuevoIngresoMetodo").value = "efectivo";
+                document.getElementById("nuevoIngresoFecha").value = getFechaLocal();
+                document.getElementById("nuevoIngresoNotas").value = "";
+                abrirModal("nuevoIngreso");
+            };
+            window.filtrarBuscadorNuevoIngreso = function (q) {
+                const dd = document.getElementById("buscadorNuevoIngresoDropdown");
+                const query = q.trim().toLowerCase();
+                const resultados =
+                    query.length === 0
+                        ? datos.pacientes.slice(0, 12)
+                        : datos.pacientes
+                              .filter((p) => p && p.nombre && p.nombre.toLowerCase().includes(query))
+                              .slice(0, 10);
+                if (resultados.length === 0) {
+                    dd.innerHTML = `<div class="buscador-item"><span class="pac-nombre" style="color:var(--text-3);">Sin resultados</span></div>`;
+                } else {
+                    dd.innerHTML = resultados
+                        .map((p) => {
+                            const tel = p.telefono || "";
+                            return `<div class="buscador-item" onclick="seleccionarPacienteNuevoIngreso('${p.id}','${p.nombre.replace(/'/g, "\\'")}')"><div class="pac-nombre">${p.nombre}</div><div class="pac-detalle">${tel}</div></div>`;
+                        })
+                        .join("");
+                }
+                dd.style.display = "block";
+            };
+
+            window.seleccionarPacienteNuevoIngreso = function (id, nombre) {
+                document.getElementById("nuevoIngresoPaciente").value = id;
+                document.getElementById("buscadorNuevoIngresoInput").value = "";
+                document.getElementById("buscadorNuevoIngresoDropdown").style.display = "none";
+                const sel = document.getElementById("buscadorNuevoIngresoSeleccionado");
+                document.getElementById("buscadorNuevoIngresoNombre").innerHTML =
+                    `<i class="ph-bold ph-user" style="margin-right:6px;"></i><strong>${nombre}</strong>`;
+                sel.classList.add("visible");
+            };
+
+            window.limpiarPacienteNuevoIngreso = function () {
+                document.getElementById("nuevoIngresoPaciente").value = "";
+                document.getElementById("buscadorNuevoIngresoInput").value = "";
+                document.getElementById("buscadorNuevoIngresoSeleccionado").classList.remove("visible");
+                document.getElementById("buscadorNuevoIngresoDropdown").style.display = "none";
+            };
+            window.setConcepto = function (texto) {
+                document.getElementById("nuevoIngresoConcepto").value = texto;
+                document.getElementById("nuevoIngresoConcepto").focus();
+            };
+
+            window.guardarNuevoIngreso = function () {
+                const concepto = document.getElementById("nuevoIngresoConcepto").value.trim();
+                const monto = parseFloat(document.getElementById("nuevoIngresoMonto").value) || 0;
+                const metodo = document.getElementById("nuevoIngresoMetodo").value;
+                const fecha = document.getElementById("nuevoIngresoFecha").value;
+                const pacienteId = document.getElementById("nuevoIngresoPaciente").value;
+                const notas = document.getElementById("nuevoIngresoNotas").value.trim();
+                if (!concepto) return mostrarAlerta("Escribe un concepto para el ingreso.", "error");
+                if (!monto || monto <= 0) return mostrarAlerta("Ingresa un monto válido.", "error");
+                if (!fecha) return mostrarAlerta("Selecciona una fecha.", "error");
+                const paciente = pacienteId ? datos.pacientes.find((p) => p.id === pacienteId) : null;
+                const nombreDisplay = paciente ? paciente.nombre + " — " + concepto : concepto;
+               const nuevoPago = {
+    id: "ingreso-" + Date.now(),
+    citaId: "ingreso-directo",
+    fecha,
+    pacienteId: pacienteId || "ingreso",
+    pacienteNombre: "[INGRESO] " + nombreDisplay,
+    monto,
+    metodo,
+    servicio: "ingreso_directo",
+    medicoId: "",
+    notas: notas || concepto
+};
+datos.pagos.push(nuevoPago);
+savePago(nuevoPago);
+                cerrarModales();
+                mostrarAlerta("Ingreso de $" + monto.toFixed(2) + " registrado. ✅", "exito");
+            };
+
+            window.descargarInformeMensualCSV = function () {
+                const mes = document.getElementById("informeMes").value;
+                const anio = document.getElementById("informeAnio").value;
+                const mesAnioPrefix = `${anio}-${mes}`;
+
+                // Filtrar elementos de ese mes específico
+                const citasMes = datos.citas.filter((c) => c && c.fecha && c.fecha.startsWith(mesAnioPrefix));
+                const citasActivas = citasMes.filter((c) => c.estado !== "cancelada");
+                const citasCanceladas = citasMes.filter((c) => c.estado === "cancelada");
+                const pagosMes = datos.pagos.filter((p) => p && p.fecha && p.fecha.startsWith(mesAnioPrefix));
+
+                // Estadísticas generales de ingresos
+                const totalIngresos = pagosMes.filter((p) => p.monto > 0).reduce((s, p) => s + (p.monto || 0), 0);
+                const totalDevoluciones = Math.abs(
+                    pagosMes.filter((p) => p.monto < 0).reduce((s, p) => s + (p.monto || 0), 0)
+                );
+                const netoCaja = totalIngresos - totalDevoluciones;
+
+                const ivaPorcentaje = datos.config?.iva !== undefined ? datos.config.iva : 16;
+                const subtotal = netoCaja / (1 + ivaPorcentaje / 100);
+                const ivaMonto = netoCaja - subtotal;
+
+                const porMetodo = { efectivo: 0, tarjeta: 0, transferencia: 0, ajuste: 0, devolucion: 0 };
+                pagosMes.forEach((p) => {
+                    if (p.metodo && porMetodo[p.metodo] !== undefined) porMetodo[p.metodo] += p.monto || 0;
+                });
+
+                // Recopilar datos de productividad de cada dentista
+                const porMedico = {};
+                datos.medicos.forEach((m) => {
+                    porMedico[m.nombre] = { citas: 0, recaudado: 0 };
+                });
+                porMedico["Sin dentista asignado"] = { citas: 0, recaudado: 0 };
+
+                citasActivas.forEach((c) => {
+                    const med = datos.medicos.find((m) => m.id === c.medicoId);
+                    const nombreMed = med ? med.nombre : "Sin dentista asignado";
+                    if (!porMedico[nombreMed]) porMedico[nombreMed] = { citas: 0, recaudado: 0 };
+                    porMedico[nombreMed].citas++;
+                });
+                pagosMes.forEach((p) => {
+                    const med = datos.medicos.find((m) => m.id === p.medicoId);
+                    const nombreMed = med ? med.nombre : "Sin dentista asignado";
+                    if (!porMedico[nombreMed]) porMedico[nombreMed] = { citas: 0, recaudado: 0 };
+                    porMedico[nombreMed].recaudado += p.monto || 0;
+                });
+
+                const esc = (v) => {
+                    const s = String(v != null ? v : "");
+                    return s.includes(",") || s.includes('"') ? '"' + s.replace(/"/g, '""') + '"' : s;
+                };
+
+                const nombreMeses = [
+                    "Enero",
+                    "Febrero",
+                    "Marzo",
+                    "Abril",
+                    "Mayo",
+                    "Junio",
+                    "Julio",
+                    "Agosto",
+                    "Septiembre",
+                    "Octubre",
+                    "Noviembre",
+                    "Diciembre"
+                ];
+                const mesNombreStr = nombreMeses[parseInt(mes) - 1];
+
+                // Armar el contenido del CSV
+                let csv = `REPORTE MENSUAL EJECUTIVO\n`;
+                csv += `Consultorio,${esc(datos.config?.nombre || "Ortho Smile SJR")}\n`;
+                csv += `Periodo,${esc(mesNombreStr)} de ${anio}\n`;
+                csv += `Fecha de Generación,${esc(new Date().toLocaleString("es-MX"))}\n\n`;
+
+                csv += `MÉTRICAS FINANCIERAS\n`;
+                csv += `Ingresos Totales (Cobros),$${totalIngresos.toFixed(2)}\n`;
+                csv += `Devoluciones Totales,-$${totalDevoluciones.toFixed(2)}\n`;
+                csv += `Neto en Caja (Ingresos - Devoluciones),$${netoCaja.toFixed(2)}\n`;
+                csv += `Base Gravable (Subtotal),$${subtotal.toFixed(2)}\n`;
+                csv += `IVA Recaudado (${ivaPorcentaje}%),$${ivaMonto.toFixed(2)}\n\n`;
+
+                csv += `DESGLOSE POR MÉTODO DE PAGO\n`;
+                csv += `Efectivo,$${porMetodo.efectivo.toFixed(2)}\n`;
+                csv += `Tarjeta,$${porMetodo.tarjeta.toFixed(2)}\n`;
+                csv += `Transferencia,$${porMetodo.transferencia.toFixed(2)}\n`;
+                csv += `Ajustes Directos de Caja,$${porMetodo.ajuste.toFixed(2)}\n`;
+                csv += `Devoluciones Realizadas,-$${Math.abs(porMetodo.devolucion).toFixed(2)}\n\n`;
+
+                csv += `RENDIMIENTO DE CITAS\n`;
+                csv += `Citas Totales Agendadas,${citasMes.length}\n`;
+                csv += `Citas Activas (Atendidas/Pendientes),${citasActivas.length}\n`;
+                csv += `Citas Canceladas,${citasCanceladas.length}\n\n`;
+
+                csv += `PRODUCTIVIDAD POR DENTISTA\n`;
+                csv += `Nombre del Dentista,Citas Activas Atendidas,Monto Recaudado ($)\n`;
+                Object.entries(porMedico).forEach(([nombre, metricas]) => {
+                    csv += `${esc(nombre)},${metricas.citas},${metricas.recaudado.toFixed(2)}\n`;
+                });
+                csv += `\n`;
+
+                csv += `DIARIO DETALLADO DE CITAS\n`;
+                csv += `Fecha,Hora,Paciente,Dentista,Procedimiento,Estado,Cobrado,Metodo Pago\n`;
+                citasMes.forEach((c) => {
+                    const pac = datos.pacientes.find((p) => p.id === c.pacienteId);
+                    const med = datos.medicos.find((m) => m.id === c.medicoId);
+                    csv +=
+                        [
+                            c.fecha || "",
+                            c.hora || "",
+                            pac?.nombre || "N/D",
+                            med?.nombre || "N/A",
+                            labelProcedimiento(c.tipo),
+                            c.estado || "",
+                            c.monto || 0,
+                            c.metodoPago || "pendiente"
+                        ]
+                            .map(esc)
+                            .join(",") + "\n";
+                });
+                csv += `\n`;
+
+                csv += `TRANSACCIONES DE CAJA DEL MES\n`;
+                csv += `Fecha,Paciente/Concepto,Monto,Método,Notas\n`;
+                pagosMes.forEach((p) => {
+                    csv +=
+                        [p.fecha || "", p.pacienteNombre || "", p.monto || 0, p.metodo || "", p.notes || p.notas || ""]
+                            .map(esc)
+                            .join(",") + "\n";
+                });
+
+                const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(blob);
+                a.download = `Reporte_Mensual_${anio}_${mes}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(a.href);
+                mostrarAlerta("Informe mensual CSV descargado.", "exito");
+            };
+
+            window.imprimirInformeMensual = function () {
+                const mes = document.getElementById("informeMes").value;
+                const anio = document.getElementById("informeAnio").value;
+                const mesAnioPrefix = `${anio}-${mes}`;
+
+                const citasMes = datos.citas.filter((c) => c && c.fecha && c.fecha.startsWith(mesAnioPrefix));
+                const citasActivas = citasMes.filter((c) => c.estado !== "cancelada");
+                const citasCanceladas = citasMes.filter((c) => c.estado === "cancelada");
+                const pagosMes = datos.pagos.filter((p) => p && p.fecha && p.fecha.startsWith(mesAnioPrefix));
+
+                const totalIngresos = pagosMes.filter((p) => p.monto > 0).reduce((s, p) => s + (p.monto || 0), 0);
+                const totalDevoluciones = Math.abs(
+                    pagosMes.filter((p) => p.monto < 0).reduce((s, p) => s + (p.monto || 0), 0)
+                );
+                const netoCaja = totalIngresos - totalDevoluciones;
+
+                const ivaPorcentaje = datos.config?.iva !== undefined ? datos.config.iva : 16;
+                const subtotal = netoCaja / (1 + ivaPorcentaje / 100);
+                const ivaMonto = netoCaja - subtotal;
+
+                const porMetodo = { efectivo: 0, tarjeta: 0, transferencia: 0, ajuste: 0, devolucion: 0 };
+                pagosMes.forEach((p) => {
+                    if (p.metodo && porMetodo[p.metodo] !== undefined) porMetodo[p.metodo] += p.monto || 0;
+                });
+
+                const porMedico = {};
+                datos.medicos.forEach((m) => {
+                    porMedico[m.nombre] = { citas: 0, recaudado: 0 };
+                });
+                porMedico["Sin dentista asignado"] = { citas: 0, recaudado: 0 };
+
+                citasActivas.forEach((c) => {
+                    const med = datos.medicos.find((m) => m.id === c.medicoId);
+                    const nombreMed = med ? med.nombre : "Sin dentista asignado";
+                    if (!porMedico[nombreMed]) porMedico[nombreMed] = { citas: 0, recaudado: 0 };
+                    porMedico[nombreMed].citas++;
+                });
+                pagosMes.forEach((p) => {
+                    const med = datos.medicos.find((m) => m.id === p.medicoId);
+                    const nombreMed = med ? med.nombre : "Sin dentista asignado";
+                    if (!porMedico[nombreMed]) porMedico[nombreMed] = { citas: 0, recaudado: 0 };
+                    porMedico[nombreMed].recaudado += p.monto || 0;
+                });
+
+                const nombreMeses = [
+                    "Enero",
+                    "Febrero",
+                    "Marzo",
+                    "Abril",
+                    "Mayo",
+                    "Junio",
+                    "Julio",
+                    "Agosto",
+                    "Septiembre",
+                    "Octubre",
+                    "Noviembre",
+                    "Diciembre"
+                ];
+                const mesNombreStr = nombreMeses[parseInt(mes) - 1];
+
+                const printArea = document.getElementById("printArea");
+                if (!printArea) return;
+
+                printArea.innerHTML = `
+                <div style="font-family:'DM Sans', sans-serif; color:#0f172a; padding:40px; max-width:850px; margin:0 auto; background:#fff;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:3px solid #0891b2; padding-bottom:20px; margin-bottom:25px;">
+                        <div>
+                            <h1 style="font-size:26px; font-weight:800; color:#0891b2; margin:0;">${datos.config?.nombre || "Ortho Smile SJR"}</h1>
+                            <p style="font-size:11px; color:#64748b; margin:4px 0 0;">${datos.config?.direccion || ""}</p>
+                            <p style="font-size:11px; color:#64748b; margin:0;">Tel: ${datos.config?.telefono || "N/A"}</p>
+                        </div>
+                        <div style="text-align:right;">
+                            <span style="background:#ecfeff; color:#0e7490; padding:6px 14px; border-radius:99px; font-size:11px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase;">Informe Gerencial Mensual</span>
+                            <h2 style="font-size:15px; font-weight:800; margin:10px 0 0;">MES: ${mesNombreStr.toUpperCase()} de ${anio}</h2>
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:15px; margin-bottom:25px;">
+                        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px; text-align:center;">
+                            <span style="font-size:10px; text-transform:uppercase; color:#64748b; font-weight:700;">Neto Recaudado</span>
+                            <h3 style="font-size:22px; color:#10b981; margin:6px 0 0; font-weight:800;">$${netoCaja.toFixed(2)}</h3>
+                        </div>
+                        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px; text-align:center;">
+                            <span style="font-size:10px; text-transform:uppercase; color:#64748b; font-weight:700;">Citas Atendidas</span>
+                            <h3 style="font-size:22px; color:#0891b2; margin:6px 0 0; font-weight:800;">${citasActivas.length}</h3>
+                        </div>
+                        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px; text-align:center;">
+                            <span style="font-size:10px; text-transform:uppercase; color:#64748b; font-weight:700;">Citas Canceladas</span>
+                            <h3 style="font-size:22px; color:#ef4444; margin:6px 0 0; font-weight:800;">${citasCanceladas.length}</h3>
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1.2fr 0.8fr; gap:20px; margin-bottom:25px;">
+                        <div style="border:1px solid #e2e8f0; border-radius:12px; padding:16px; background:#ffffff;">
+                            <h4 style="font-size:11px; text-transform:uppercase; margin:0 0 12px; color:#0f172a; border-bottom:1px solid #e2e8f0; padding-bottom:6px; font-weight:700; letter-spacing:0.05em;">Estructura de Caja</h4>
+                            <div style="display:flex; justify-content:space-between; padding:5px 0; font-size:12px;"><span>Ingresos Totales (Cobros):</span><strong style="color:#10b981;">$${totalIngresos.toFixed(2)}</strong></div>
+                            <div style="display:flex; justify-content:space-between; padding:5px 0; font-size:12px;"><span>Devoluciones Totales:</span><strong style="color:#ef4444;">-$${totalDevoluciones.toFixed(2)}</strong></div>
+                            <div style="display:flex; justify-content:space-between; padding:6px 0; font-size:12px; border-top:1px dashed #cbd5e1; margin-top:6px;"><span>Base Gravable (Subtotal):</span><span>$${subtotal.toFixed(2)}</span></div>
+                            <div style="display:flex; justify-content:space-between; padding:5px 0; font-size:12px;"><span>Monto IVA (${ivaPorcentaje}%):</span><span>$${ivaMonto.toFixed(2)}</span></div>
+                            <div style="display:flex; justify-content:space-between; padding:8px 0; font-size:13px; border-top:2px solid #1e293b; margin-top:8px; font-weight:800;"><span>TOTAL NETO CAJA:</span><span style="color:#10b981;">$${netoCaja.toFixed(2)}</span></div>
+                        </div>
+
+                        <div style="border:1px solid #e2e8f0; border-radius:12px; padding:16px; background:#ffffff;">
+                            <h4 style="font-size:11px; text-transform:uppercase; margin:0 0 12px; color:#0f172a; border-bottom:1px solid #e2e8f0; padding-bottom:6px; font-weight:700; letter-spacing:0.05em;">Métodos de Recaudación</h4>
+                            <div style="display:flex; justify-content:space-between; padding:5px 0; font-size:12px;"><span>Efectivo:</span><strong>$${porMetodo.efectivo.toFixed(2)}</strong></div>
+                            <div style="display:flex; justify-content:space-between; padding:5px 0; font-size:12px;"><span>Tarjeta:</span><strong>$${porMetodo.tarjeta.toFixed(2)}</strong></div>
+                            <div style="display:flex; justify-content:space-between; padding:5px 0; font-size:12px;"><span>Transferencia:</span><strong>$${porMetodo.transferencia.toFixed(2)}</strong></div>
+                            ${porMetodo.ajuste !== 0 ? `<div style="display:flex; justify-content:space-between; padding:5px 0; font-size:12px;"><span>Ajustes directos:</span><strong>$${porMetodo.ajuste.toFixed(2)}</strong></div>` : ""}
+                            ${porMetodo.devolucion !== 0 ? `<div style="display:flex; justify-content:space-between; padding:5px 0; font-size:12px; color:#ef4444;"><span>Devoluciones:</span><strong>-$${Math.abs(porMetodo.devolucion).toFixed(2)}</strong></div>` : ""}
+                        </div>
+                    </div>
+
+                    <div style="border:1px solid #e2e8f0; border-radius:12px; padding:16px; background:#ffffff; margin-bottom:25px;">
+                        <h4 style="font-size:11px; text-transform:uppercase; margin:0 0 12px; color:#0f172a; border-bottom:1px solid #e2e8f0; padding-bottom:6px; font-weight:700; letter-spacing:0.05em;">Productividad y Desempeño por Dentista</h4>
+                        <table style="width:100%; border-collapse:collapse; font-size:12px;">
+                            <thead>
+                                <tr style="background:#f1f5f9; text-align:left;">
+                                    <th style="padding:8px; border-bottom:1px solid #cbd5e1; font-weight:700;">Médico Dentista</th>
+                                    <th style="padding:8px; border-bottom:1px solid #cbd5e1; text-align:center; font-weight:700;">Citas en el Mes</th>
+                                    <th style="padding:8px; border-bottom:1px solid #cbd5e1; text-align:right; font-weight:700;">Cobros Recaudados ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${Object.entries(porMedico)
+                                    .map(
+                                        ([medico, datosMed]) => `
+                                    <tr style="border-bottom:1px solid #e2e8f0;">
+                                        <td style="padding:8px; font-weight:600;">${medico}</td>
+                                        <td style="padding:8px; text-align:center;">${datosMed.citas}</td>
+                                        <td style="padding:8px; text-align:right; font-weight:700; color:#0e7490;">$${datosMed.recaudado.toFixed(2)}</td>
+                                    </tr>
+                                `
+                                    )
+                                    .join("")}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:25px;">
+                        <div style="border:1px solid #e2e8f0;border-radius:12px;padding:16px;background:#fff;">
+                            <h4 style="font-size:11px;text-transform:uppercase;margin:0 0 12px;color:#0f172a;border-bottom:1px solid #e2e8f0;padding-bottom:6px;font-weight:700;letter-spacing:0.05em;">Ingresos por día del mes</h4>
+                            <canvas id="chartPrintDias" width="340" height="160"></canvas>
+                        </div>
+                        <div style="border:1px solid #e2e8f0;border-radius:12px;padding:16px;background:#fff;">
+                            <h4 style="font-size:11px;text-transform:uppercase;margin:0 0 12px;color:#0f172a;border-bottom:1px solid #e2e8f0;padding-bottom:6px;font-weight:700;letter-spacing:0.05em;">Métodos de pago</h4>
+                            <canvas id="chartPrintMetodos" width="340" height="160"></canvas>
+                        </div>
+                    </div>
+                    <div style="border:1px solid #e2e8f0;border-radius:12px;padding:16px;background:#fff;margin-bottom:25px;">
+                        <h4 style="font-size:11px;text-transform:uppercase;margin:0 0 12px;color:#0f172a;border-bottom:1px solid #e2e8f0;padding-bottom:6px;font-weight:700;letter-spacing:0.05em;">Recaudado por dentista</h4>
+                        <canvas id="chartPrintDentistas" width="740" height="120"></canvas>
+                    </div>
+                    <div style="text-align:center; font-size:10px; color:#94a3b8; margin-top:40px; border-top:1px solid #e2e8f0; padding-top:10px;">
+                        Reporte Ejecutivo Generado Automáticamente por AxoCitas Pro v1.2 — Todos los Derechos Reservados.
+                    </div>
+                </div>
+            `;
+
+                // ── Cargar Chart.js y renderizar gráficas antes de imprimir ──
+                function renderizarGraficasImpresion() {
+                    // Ingresos por día
+                    const ingresosPorDia = {};
+                    pagosMes
+                        .filter((p) => p.monto > 0)
+                        .forEach((p) => {
+                            if (p.fecha) ingresosPorDia[p.fecha] = (ingresosPorDia[p.fecha] || 0) + p.monto;
+                        });
+                    const diasOrdenados = Object.keys(ingresosPorDia).sort();
+                    const labelsDias = diasOrdenados.map((f) => f.slice(8)); // solo el día
+                    const datasDias = diasOrdenados.map((f) => ingresosPorDia[f]);
+
+                    new Chart(document.getElementById("chartPrintDias"), {
+                        type: "bar",
+                        data: {
+                            labels: labelsDias,
+                            datasets: [
+                                { label: "Ingresos", data: datasDias, backgroundColor: "#0891b2", borderRadius: 3 }
+                            ]
+                        },
+                        options: {
+                            responsive: false,
+                            animation: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                x: {
+                                    ticks: { font: { size: 9 }, color: "#64748b", autoSkip: true, maxRotation: 0 },
+                                    grid: { display: false }
+                                },
+                                y: {
+                                    ticks: {
+                                        font: { size: 9 },
+                                        color: "#64748b",
+                                        callback: (v) => "$" + (v / 1000).toFixed(1) + "k"
+                                    },
+                                    grid: { color: "#f1f5f9" }
+                                }
+                            }
+                        }
+                    });
+
+                    // Métodos de pago
+                    const metodosData = [
+                        { label: "Efectivo", value: porMetodo.efectivo, color: "#10b981" },
+                        { label: "Tarjeta", value: porMetodo.tarjeta, color: "#0891b2" },
+                        { label: "Transferencia", value: porMetodo.transferencia, color: "#7c3aed" }
+                    ].filter((m) => m.value > 0);
+
+                    new Chart(document.getElementById("chartPrintMetodos"), {
+                        type: "doughnut",
+                        data: {
+                            labels: metodosData.map((m) => m.label),
+                            datasets: [
+                                {
+                                    data: metodosData.map((m) => m.value),
+                                    backgroundColor: metodosData.map((m) => m.color),
+                                    borderWidth: 0
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: false,
+                            animation: false,
+                            cutout: "60%",
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: "right",
+                                    labels: { font: { size: 10 }, color: "#475569", boxWidth: 10, padding: 8 }
+                                }
+                            }
+                        }
+                    });
+
+                    // Por dentista
+                    const dentistasLabels = Object.keys(porMedico).filter((k) => porMedico[k].recaudado > 0);
+                    const dentistasData = dentistasLabels.map((k) => porMedico[k].recaudado);
+
+                    new Chart(document.getElementById("chartPrintDentistas"), {
+                        type: "bar",
+                        data: {
+                            labels: dentistasLabels,
+                            datasets: [
+                                {
+                                    label: "Recaudado",
+                                    data: dentistasData,
+                                    backgroundColor: ["#0891b2", "#7c3aed", "#10b981", "#f59e0b"],
+                                    borderRadius: 4
+                                }
+                            ]
+                        },
+                        options: {
+                            indexAxis: "y",
+                            responsive: false,
+                            animation: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                x: {
+                                    ticks: {
+                                        font: { size: 9 },
+                                        color: "#64748b",
+                                        callback: (v) => "$" + v.toLocaleString()
+                                    },
+                                    grid: { color: "#f1f5f9" }
+                                },
+                                y: { ticks: { font: { size: 10 }, color: "#334155" }, grid: { display: false } }
+                            }
+                        }
+                    });
+                }
+
+                // Verificar si Chart.js ya está cargado
+                if (typeof Chart !== "undefined") {
+                    renderizarGraficasImpresion();
+                    setTimeout(() => window.print(), 400);
+                } else {
+                    const script = document.createElement("script");
+                    script.src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js";
+                    script.onload = () => {
+                        renderizarGraficasImpresion();
+                        setTimeout(() => window.print(), 400);
+                    };
+                    document.head.appendChild(script);
+                }
+            };
+        </script>
+    </body>
+</html>
